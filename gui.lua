@@ -27,13 +27,22 @@ end
                                                   
 ]]
 
+function getText(pTxt)
+    local textReturn
+    if _str[pTxt] == nil then 
+        return "#"..pTxt.."#"
+    else
+        return _str[pTxt]
+    end 
+end 
+
 function txtPrint(pTxt)
     love.graphics.setFont(pTxt.font)
     love.graphics.setColor(pTxt.color)
     if pTxt.align == nil then 
-        love.graphics.print(pTxt.txt, pTxt.x, pTxt.y)
+        love.graphics.print(getText(pTxt.txt), pTxt.x, pTxt.y)
     else 
-        love.graphics.printf(pTxt.txt, pTxt.x, pTxt.y, pTxt.limit, pTxt.align)
+        love.graphics.printf(getText(pTxt.txt), pTxt.x, pTxt.y, pTxt.limit, pTxt.align)
     end 
     love.graphics.setColor(1,1,1,1)
 end 

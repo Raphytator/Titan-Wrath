@@ -1,5 +1,5 @@
 local lang = {}
 
-lang.menuPrincipal = "Main Menu"
+lang.titreJeu = "Titan Wrath"
 
 return lang

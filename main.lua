@@ -16,6 +16,7 @@ io.stdout:setvbuf("no")
 require("gui")
 require("fonctions")
 require("init")
+require("tweening")
 
 
 function love.load()

@@ -13,12 +13,14 @@ local menuPrincipal = {}
 local img = {}
 local btn = {}
 local spr = {}
+local txt = {}
+local tween = {}
 
 function menuPrincipal.init()
 
-    -- ==============
+    -- ============
     -- Choix langue
-    -- ==============
+    -- ============
     img.flags = {
         anglais = {
             defaut = love.graphics.newImage("img/Flag-EN.png"),
@@ -40,7 +42,12 @@ function menuPrincipal.init()
     -- ==============
 
     spr.fondMenu = newSprite(love.graphics.newImage("img/fondMenuPrincipal.jpg"), 0, 0)
-
+    
+    local depart = 0 - _fonts.titre:getHeight("W") - 10 
+    local distance = 200
+    local duree = 3
+    tween.titreJeu = newTween(depart, distance, duree)    
+    txt.titreJeu = newTxt("titreJeu", _fonts.titre, 0, depart, {0,0,0,1}, _ecran.w, "center")
 
 end 
 
@@ -75,7 +82,8 @@ function menuPrincipal.update(dt)
             btn.flagEN:update(menuPrincipal.selectLangue, {"en"})
             btn.flagFR:update(menuPrincipal.selectLangue, {"fr"})
         elseif _etatActu == "menuPrincipal" then 
-
+            tween.titreJeu:update(dt)
+            txt.titreJeu.y = tween.titreJeu.actu
         end 
     end
 
@@ -109,7 +117,7 @@ function menuPrincipal.draw()
         btn.flagFR:draw()
     elseif _etatActu == "menuPrincipal" then 
         spr.fondMenu:draw()
-
+        txt.titreJeu:print()
     end 
     
 end 

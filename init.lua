@@ -29,6 +29,7 @@ end
 
 function initFonts()
     _fonts = {}
+    _fonts.titre = love.graphics.newFont("font/DIOGENES.ttf", 80)
     _fonts.texte = love.graphics.newFont("font/DIOGENES.ttf", 32)
 
 end 

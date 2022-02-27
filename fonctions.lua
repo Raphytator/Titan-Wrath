@@ -19,16 +19,8 @@ function changeEtat(pNewEtat)
     _etatActu = pNewEtat
 end 
 
-function getText(pTxt)
-    local textReturn
-    if _str[pTxt] == nil then 
-        return "#"..pTxt.."#"
-    else
-        return _str[pTxt]
-    end 
-end 
-
 function updateClic()
     if love.mouse.isDown(1) and not _clic then _clic = true end
     if not love.mouse.isDown(1) then _clic = false end
 end 
+
