@@ -81,7 +81,7 @@ function fadeUpdate(dt)
         if _fade.alphaTransition <= 0 then 
             _fade.alphaTransition = 0 
             _fade.fadeIn = false 
-            _fade.fadeEnd = true
+            --_fade.fadeEnd = true
         end
     elseif not _fade.fadeIn and _fade.fadeOut then 
         _fade.alphaTransition = _fade.alphaTransition + dt * vitesseFondu
@@ -236,3 +236,39 @@ function newBtn(type, x, y, ...)
 
     return tab
 end
+
+--[[
+███████╗██████╗ ██████╗ ██╗████████╗███████╗
+██╔════╝██╔══██╗██╔══██╗██║╚══██╔══╝██╔════╝
+███████╗██████╔╝██████╔╝██║   ██║   █████╗  
+╚════██║██╔═══╝ ██╔══██╗██║   ██║   ██╔══╝  
+███████║██║     ██║  ██║██║   ██║   ███████╗
+╚══════╝╚═╝     ╚═╝  ╚═╝╚═╝   ╚═╝   ╚══════╝
+                                            
+]]
+
+function drawSprite(tab)
+    love.graphics.setColor(1,1,1,tab.alpha)
+    love.graphics.draw(tab.img, tab.x, tab.y, 0, tab.sx, tab.sy)
+end 
+
+function newSprite(image, x, y, alpha)
+    local tab = {}
+
+    tab.img = image    
+    tab.x = x 
+    tab.y = y 
+    tab.color = {}
+    tab.sx = 1
+    tab.sy = 1
+
+    if alpha ~= nil then 
+        tab.alpha = alpha
+    else 
+        tab.alpha = 1
+    end
+
+    tab.draw = drawSprite
+
+    return tab
+end 
