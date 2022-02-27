@@ -13,3 +13,22 @@ function changeScene(pNewScene)
     end 
 
 end 
+
+function changeEtat(pNewEtat)
+    _etatOld = _etatActu
+    _etatActu = pNewEtat
+end 
+
+function getText(pTxt)
+    local textReturn
+    if _txt[pTxt] == nil then 
+        return "#"..string.upper(pTxt).."#"
+    else
+        return _txt[pTxt]
+    end 
+end 
+
+function updateClic()
+    if love.mouse.isDown(1) and not _clic then _clic = true end
+    if not love.mouse.isDown(1) then _clic = false end
+end 
