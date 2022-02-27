@@ -182,7 +182,7 @@ function btnUpdate(pBtn, pEvent, pVar)
     if not love.mouse.isDown(1) then pBtn.pressed = false end
 end
 
-function creaBtn(type, x, y, ...)
+function newBtn(type, x, y, ...)
 
     -- btn img          => (image, imageHover, imagePressed, text, font, color)
     -- btn txt          => (texte, font, color, colorHover, colorPressed)

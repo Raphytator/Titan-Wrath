@@ -21,10 +21,10 @@ end
 
 function getText(pTxt)
     local textReturn
-    if _txt[pTxt] == nil then 
-        return "#"..string.upper(pTxt).."#"
+    if _str[pTxt] == nil then 
+        return "#"..pTxt.."#"
     else
-        return _txt[pTxt]
+        return _str[pTxt]
     end 
 end 
 

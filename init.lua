@@ -15,6 +15,7 @@ function initVariables()
     _etatOld = nil
     _etatActu = nil
     _txt = {}
+    _txt.choixLangue = "Selection de la langue"
     _clic = false 
     _mouse = { x = 0, y = 0}
     fadeInitialisation()
