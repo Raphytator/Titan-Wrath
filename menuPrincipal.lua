@@ -44,9 +44,7 @@ function menuPrincipal.init()
     spr.fondMenu = newSprite(love.graphics.newImage("img/fondMenuPrincipal.jpg"), 0, 0)
     
     local depart = 0 - _fonts.titre:getHeight("W") - 10 
-    local distance = 200
-    local duree = 3
-    tween.titreJeu = newTween(depart, distance, duree)    
+    tween.titreJeu = newTween(depart, 200, 2)
     txt.titreJeu = newTxt("titreJeu", _fonts.titre, 0, depart, {0,0,0,1}, _ecran.w, "center")
 
 end 
