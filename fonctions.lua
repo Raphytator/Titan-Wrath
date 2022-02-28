@@ -24,3 +24,9 @@ function updateClic()
     if not love.mouse.isDown(1) then _clic = false end
 end 
 
+function inArray(pTab, pValue)
+    for k,v in pairs(pTab) do 
+        if v == pValue then return true end 
+    end
+    return false
+end

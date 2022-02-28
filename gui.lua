@@ -13,8 +13,10 @@ function drawRectangle(pType, pX, pY, pW, pH, pColor)
     love.graphics.setColor(1,1,1,1)
 end 
 
-function drawVoile()
-    drawRectangle("fill", 0, 0, _ecran.w, _ecran.h, {0,0,0,0.6})
+function drawVoile(pAlpha)
+    local alpha
+    if pAlpha ~= nil then alpha = pAlpha else alpha = .6 end 
+    drawRectangle("fill", 0, 0, _ecran.w, _ecran.h, {0,0,0,alpha})
 end
 
 --[[
@@ -132,7 +134,7 @@ function btnDraw(pBtn)
     if pBtn.type == "img" then    
         if pBtn.pressed then
             pBtn.img = pBtn.imgPressed
-            color = {0,0,0,1}         
+            color = {1,1,1,1}         
         elseif pBtn.hover then
             pBtn.img = pBtn.imgHover   
             color = {1,1,0,1}     
@@ -190,6 +192,7 @@ function btnUpdate(pBtn, pEvent, pVar)
         end
         
         if pEvent ~= nil then 
+            pBtn.pressed = false
             if pVar ~= nil then 
                 pEvent(pVar[1], pVar[2], pVar[3], pVar[4])
             else 
@@ -289,4 +292,90 @@ function newSprite(image, x, y, alpha)
     tab.draw = drawSprite
 
     return tab
+end 
+
+--[[
+ ██████╗ █████╗ ██████╗ ██████╗ ███████╗███████╗
+██╔════╝██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔════╝
+██║     ███████║██║  ██║██████╔╝█████╗  ███████╗
+██║     ██╔══██║██║  ██║██╔══██╗██╔══╝  ╚════██║
+╚██████╗██║  ██║██████╔╝██║  ██║███████╗███████║
+ ╚═════╝╚═╝  ╚═╝╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝
+                                                
+]]
+
+function drawCadre(pCadre)
+
+    love.graphics.setColor(1, 1, 1, pCadre.alpha)
+
+    -- Côté gauche
+    love.graphics.draw(_img.tilesetCadre, _quad.cadre[1], pCadre.x, pCadre.y, 0, pCadre.sx, pCadre.sy, pCadre.ox, pCadre.oy)  
+    for l=1, pCadre.l do
+        love.graphics.draw(_img.tilesetCadre, _quad.cadre[4], pCadre.x, pCadre.y + (_tailleElemCadre * l), 0, pCadre.sx, pCadre.sy, pCadre.ox, pCadre.oy)
+    end  
+    love.graphics.draw(_img.tilesetCadre, _quad.cadre[7], pCadre.x, pCadre.y + (_tailleElemCadre * pCadre.l) + _tailleElemCadre, 0, pCadre.sx, pCadre.sy, pCadre.ox, pCadre.oy)
+
+    -- Milieu Haut et Bas
+    for c=1, pCadre.c do
+        love.graphics.draw(_img.tilesetCadre, _quad.cadre[2], pCadre.x + (_tailleElemCadre * c), pCadre.y, 0, pCadre.sx, pCadre.sy, pCadre.ox, pCadre.oy)
+        love.graphics.draw(_img.tilesetCadre, _quad.cadre[8], pCadre.x + (_tailleElemCadre * c), pCadre.y + (_tailleElemCadre * pCadre.l) + _tailleElemCadre, 0, pCadre.sx, pCadre.sy, pCadre.ox, pCadre.oy)
+    end
+
+    for l=1, pCadre.l do
+        for c=1, pCadre.c + 1 do
+            love.graphics.draw(_img.tilesetCadre, _quad.cadre[5], pCadre.x + (_tailleElemCadre * c), pCadre.y + (_tailleElemCadre * l), 0, pCadre.sx, pCadre.sy, pCadre.ox, pCadre.oy)
+        end
+    end
+
+    -- Coté droit
+    love.graphics.draw(_img.tilesetCadre, _quad.cadre[3], pCadre.x + (_tailleElemCadre * pCadre.c) + _tailleElemCadre, pCadre.y, 0, pCadre.sx, pCadre.sy, pCadre.ox, pCadre.oy)
+    for l=1, pCadre.l do
+        love.graphics.draw(_img.tilesetCadre, _quad.cadre[6], pCadre.x + (_tailleElemCadre * pCadre.c) + _tailleElemCadre, pCadre.y + (_tailleElemCadre * l), 0, pCadre.sx, pCadre.sy, pCadre.ox, pCadre.oy)
+    end  
+    love.graphics.draw(_img.tilesetCadre, _quad.cadre[9], pCadre.x + (_tailleElemCadre * pCadre.c) + _tailleElemCadre, pCadre.y + (_tailleElemCadre * pCadre.l) + _tailleElemCadre, 0, pCadre.sx, pCadre.sy, pCadre.ox, pCadre.oy)
+
+    love.graphics.setColor(1, 1, 1, 1)
+end 
+
+function newCadre(x, y, c, l)
+    local cadre = {}
+    cadre.x = x
+    cadre.y = y
+    cadre.c = c
+    cadre.l = l
+    cadre.ox = 0
+    cadre.oy = 0
+    cadre.sx = 1
+    cadre.sy = 1
+    cadre.w = _tailleElemCadre * (c + 2)
+    cadre.h = _tailleElemCadre * (l + 2)
+    cadre.alpha = 1
+
+    cadre.draw = drawCadre
+
+    return cadre
+end
+
+function initCadre()
+    _img.tilesetCadre = love.graphics.newImage("img/cadre.png")
+    _tailleElemCadre = _img.tilesetCadre:getWidth() / 3
+    _quad.cadre = {}
+    local n = 1
+    for i=1, 3 do 
+        for j=1, 3 do 
+            _quad.cadre[n] = love.graphics.newQuad((j-1)*_tailleElemCadre, (i-1)*_tailleElemCadre, _tailleElemCadre, _tailleElemCadre, _img.tilesetCadre:getWidth(), _img.tilesetCadre:getHeight())
+            n = n + 1 
+        end 
+    end 
+end
+
+function centrageCadre(axe, val)
+    local result, axeEcran 
+    if axe == "x" then
+        axeEcran = _ecran.w        
+    elseif axe == "y" then 
+        axeEcran = _ecran.h
+    end 
+    result = (axeEcran - (_tailleElemCadre * (val + 2))) / 2
+    return result
 end 
