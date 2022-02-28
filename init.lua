@@ -2,6 +2,7 @@ function init()
 
     initVariables()
     initRoot()
+    initImg()
     initFonts()
     initScenes()
 
@@ -27,10 +28,18 @@ function initRoot()
     --love.mouse.setVisible(false)
 end
 
+function initImg()
+    _img = {}
+    _img.btn = love.graphics.newImage("img/bouton.png")
+    _img.btnHover = love.graphics.newImage("img/boutonHover.png")
+    _img.boutonPressed = love.graphics.newImage("img/boutonPressed.png")
+end 
+
 function initFonts()
     _fonts = {}
     _fonts.titre = love.graphics.newFont("font/DIOGENES.ttf", 80)
     _fonts.texte = love.graphics.newFont("font/DIOGENES.ttf", 32)
+    _fonts.btn = love.graphics.newFont("font/DIOGENES.ttf", 36)
 
 end 
 

@@ -132,14 +132,23 @@ function btnDraw(pBtn)
     if pBtn.type == "img" then    
         if pBtn.pressed then
             pBtn.img = pBtn.imgPressed
-            pBtn.img = pBtn.imgDefault            
+            color = {0,0,0,1}         
         elseif pBtn.hover then
-            pBtn.img = pBtn.imgHover            
+            pBtn.img = pBtn.imgHover   
+            color = {1,1,0,1}     
         else
             pBtn.img = pBtn.imgDefault
+            color = {0,0,0,1}
         end
         love.graphics.draw(pBtn.img, pBtn.x, pBtn.y, pBtn.r, pBtn.sx, pBtn.sy, pBtn.ox, pBtn.oy)
         
+        if pBtn.txt ~= nil then
+            love.graphics.setColor(color)
+            love.graphics.setFont(pBtn.font)
+            love.graphics.printf(getText(pBtn.txt), pBtn.x, pBtn.y, pBtn.img:getWidth(), "center")
+            
+            love.graphics.setColor(1,1,1,1)
+        end     
     elseif pBtn.type == "txt" then 
         if pBtn.pressed then
             color = pBtn.colorPressed
@@ -151,7 +160,7 @@ function btnDraw(pBtn)
 
         love.graphics.setColor(color)
         love.graphics.setFont(pBtn.font)
-        love.graphics.print(pBtn.txt, pBtn.x, pBtn.y)
+        love.graphics.print(getText(pBtn.txt), pBtn.x, pBtn.y)
         love.graphics.setColor(1,1,1,1)
     end
 end

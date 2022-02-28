@@ -6,7 +6,7 @@ end
 
 
 function tweenUpdate(pTween, dt)
-    if pTween.timer < pTween.duree then pTween.timer = pTween.timer + dt end 
+    if pTween.timer < pTween.duree then pTween.timer = pTween.timer + dt else if not pTween.finished then pTween.finished = true end end
     pTween.actu = tween_quadratic_easingOut(pTween.timer, pTween.depart, pTween.distance, pTween.duree)
 end 
 
@@ -18,6 +18,7 @@ function newTween(pDepart, pDistance, pDuree)
     tab.distance = pDistance
     tab.duree = pDuree
     tab.actu = tab.depart
+    tab.finished = false
 
     tab.update = tweenUpdate
 

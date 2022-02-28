@@ -47,6 +47,15 @@ function menuPrincipal.init()
     tween.titreJeu = newTween(depart, 200, 2)
     txt.titreJeu = newTxt("titreJeu", _fonts.titre, 0, depart, {0,0,0,1}, _ecran.w, "center")
 
+    local xBtn = (_ecran.w - _img.btn:getWidth()) / 2
+    local yBtn = 420
+    local separationY = _img.btn:getHeight() + 5
+    btn.jouer = newBtn("img", xBtn, yBtn, _img.btn, _img.btnHover, _img.btnPressed, "jouer")
+    btn.options = newBtn("img", xBtn, btn.jouer.y + separationY, _img.btn, _img.btnHover, _img.btnPressed, "options")
+    btn.controles = newBtn("img", xBtn, btn.options.y + separationY, _img.btn, _img.btnHover, _img.btnPressed, "controles")
+    btn.credits = newBtn("img", xBtn, btn.controles.y + separationY, _img.btn, _img.btnHover, _img.btnPressed, "credits")
+    btn.quitter = newBtn("img", xBtn, btn.credits.y + separationY, _img.btn, _img.btnHover, _img.btnPressed, "quitter")
+
 end 
 
 --[[
@@ -82,6 +91,14 @@ function menuPrincipal.update(dt)
         elseif _etatActu == "menuPrincipal" then 
             tween.titreJeu:update(dt)
             txt.titreJeu.y = tween.titreJeu.actu
+
+            if tween.titreJeu.finished then 
+                btn.jouer:update()
+                btn.options:update()
+                btn.controles:update()
+                btn.credits:update()
+                btn.quitter:update(love.event.quit)
+            end 
         end 
     end
 
@@ -116,6 +133,14 @@ function menuPrincipal.draw()
     elseif _etatActu == "menuPrincipal" then 
         spr.fondMenu:draw()
         txt.titreJeu:print()
+
+        if tween.titreJeu.finished then 
+            btn.jouer:draw()
+            btn.options:draw()
+            btn.controles:draw()
+            btn.credits:draw()
+            btn.quitter:draw()
+        end 
     end 
     
 end 
