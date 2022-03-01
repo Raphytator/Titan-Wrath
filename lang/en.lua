@@ -50,8 +50,8 @@ lang.creditsTxt5 = "Raphytator (Programing, Gamedesign, Music)"
 -- Jeu
 -- ===
 
-lang.clicGauche = "Left clic"
-lang.clicDroit = "Right clic"
+lang.clicGauche = "Left click"
+lang.clicDroit = "Right click"
 lang.barreEspace = "Spacebar"
 
 
