@@ -12,7 +12,7 @@ function init()
 end
 
 function initVariables()
-    _ecran = { w = 1280, h = 720 }
+    _ecran = { w = 1280, h = 720, fullscreen = false }
     _sceneOld = nil
     _sceneActu = nil
     _etatOld = nil
@@ -22,6 +22,7 @@ function initVariables()
     _clic = false 
     _mouse = { x = 0, y = 0}
     _quad = {}
+    _scale = 1
     fadeInitialisation()
 end 
 

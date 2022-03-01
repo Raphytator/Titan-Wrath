@@ -32,6 +32,7 @@ function love.update(dt)
 end
 
 function love.draw()
+    love.graphics.scale(_scale)
     _sceneActu.draw()
     fadeDraw()
 end

@@ -63,15 +63,34 @@ function menuPrincipal.init()
 
     btn.retourMenuPrincipal = newBtn("img", _ecran.w - _img.btn:getWidth() - 25, _ecran.h - _img.btn:getHeight() - 15, _img.btn, _img.btnHover, _img.btnPressed, "retour")
 
+    local l, c, xCadre, yCadre
+    
+    -- =======
+    -- Options
+    -- =======
+
+    l = 3
+    c = 6
+    xCadre = centrageCadre("x", c)
+    yCadre = centrageCadre("y", l)
+    cadre.options = newCadre(xCadre, yCadre, c, l)
+    img.checkbox = love.graphics.newImage("img/checkBox.png")
+    img.checkboxChecked = love.graphics.newImage("img/checkBoxChecked.png")
+    btn.musique = newBtn("chkbox", xCadre + 25, yCadre + 35, img.checkbox, img.checkboxChecked, true)
+    txt.musique = newTxt("musique", _fonts.texte, btn.musique.x + 40, btn.musique.y - 8)
+    btn.sons = newBtn("chkbox", xCadre + 25, btn.musique.y + _fonts.texte:getHeight("W") + 5, img.checkbox, img.checkboxChecked, true)
+    txt.sons = newTxt("sons", _fonts.texte, btn.sons.x + 40, btn.sons.y - 8)
+    btn.fullscreen = newBtn("chkbox", xCadre + 25, btn.sons.y + _fonts.texte:getHeight("W") + 5, img.checkbox, img.checkboxChecked, false)
+    txt.fullscreen = newTxt("fullscreen", _fonts.texte, btn.fullscreen.x + 40, btn.fullscreen.y - 8)
 
     -- =======
     -- Crédits
     -- =======
 
-    local l = 6
-    local c = 18
-    local xCadre = centrageCadre("x", c)
-    local yCadre = centrageCadre("y", l)
+    l = 6
+    c = 18
+    xCadre = centrageCadre("x", c)
+    yCadre = centrageCadre("y", l)
     cadre.credits = newCadre(xCadre, yCadre, c, l)
     txt.creditsTxt = {}
     txt.creditsTxt[1] = newTxt("creditsTxt1", _fonts.texte, xCadre + 25, yCadre + 25, {0,0,0,1}, cadre.credits.w - 50, "center")
@@ -79,8 +98,6 @@ function menuPrincipal.init()
     txt.creditsTxt[3] = newTxt("creditsTxt3", _fonts.texte, xCadre + 25, txt.creditsTxt[2].y + 50, {0,0,0,1}, cadre.credits.w - 50, "left")
     txt.creditsTxt[4] = newTxt("creditsTxt4", _fonts.texte, xCadre + 25, txt.creditsTxt[3].y + 50, {0,0,0,1}, cadre.credits.w - 50, "left")
     txt.creditsTxt[5] = newTxt("creditsTxt5", _fonts.texte, xCadre + 25, txt.creditsTxt[4].y + 50, {0,0,0,1}, cadre.credits.w - 50, "left")
-
-
 
 end 
 
@@ -127,20 +144,22 @@ function menuPrincipal.update(dt)
             end 
         elseif _etatActu == "retourMenuPrincipal" then 
             if alphaVoile > 0 then 
-                alphaVoile = alphaVoile - dt
+                alphaVoile = alphaVoile - dt * 3
             else 
                 changeEtat("menuPrincipal")
             end
         elseif inArray({"options", "controles", "credits"}, _etatActu) then 
             if alphaVoile < .6 then 
-                alphaVoile = alphaVoile + dt
+                alphaVoile = alphaVoile + dt * 3
             else 
                 if not affichePage then affichePage = true end
 
                 btn.retourMenuPrincipal:update(changeEtat, {"retourMenuPrincipal"})
 
                 if _etatActu == "options" then 
-                
+                    btn.musique:update()
+                    btn.sons:update()
+                    btn.fullscreen:update(menuPrincipal.passageFullscreen)
                 end
             end 
         end 
@@ -188,12 +207,20 @@ function menuPrincipal.draw()
             btn.controles:draw()
             btn.credits:draw()
             btn.quitter:draw()
-        end 
+        end
     elseif _etatActu == "options" then 
         spr.fondMenu:draw()
         drawVoile(alphaVoile)
+        if affichePage then            
+            cadre.options:draw()
+            btn.retourMenuPrincipal:draw()
 
-        if affichePage then
+            btn.musique:draw()
+            txt.musique:print()
+            btn.sons:draw()
+            txt.sons:print()
+            btn.fullscreen:draw()
+            txt.fullscreen:print()
 
         end
     elseif _etatActu == "controles" then 
@@ -201,7 +228,7 @@ function menuPrincipal.draw()
         drawVoile(alphaVoile)
 
         if affichePage then
-
+            btn.retourMenuPrincipal:draw()
         end
     elseif _etatActu == "credits" then 
         spr.fondMenu:draw()
@@ -253,5 +280,14 @@ function menuPrincipal.ouvrePage(pPage)
     affichePage = false
     changeEtat(pPage)
 end 
+
+function menuPrincipal.passageFullscreen()
+    _ecran.fullscreen = not _ecran.fullscreen
+    local flags = { fullscreen = _ecran.fullscreen}
+    love.window.setMode(_ecran.w, _ecran.h, flags)
+
+    _scale = love.graphics.getWidth() / _ecran.w 
+    
+end
 
 return menuPrincipal

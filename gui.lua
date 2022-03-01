@@ -164,14 +164,21 @@ function btnDraw(pBtn)
         love.graphics.setFont(pBtn.font)
         love.graphics.print(getText(pBtn.txt), pBtn.x, pBtn.y)
         love.graphics.setColor(1,1,1,1)
+    elseif pBtn.type == "chkbox" then
+        if pBtn.checked then
+            pBtn.img = pBtn.imgCheck
+        else
+            pBtn.img = pBtn.imgNoCheck
+        end
+        love.graphics.draw(pBtn.img, pBtn.x, pBtn.y)
     end
 end
 
 function btnUpdate(pBtn, pEvent, pVar)               
-    if _mouse.x >= pBtn.x - pBtn.ox and
-        _mouse.x <= (pBtn.x - pBtn.ox + pBtn.w) and
-        _mouse.y >= pBtn.y - pBtn.oy and
-        _mouse.y <= (pBtn.y - pBtn.oy + pBtn.h) then
+    if _mouse.x / _scale>= pBtn.x - pBtn.ox and
+        _mouse.x / _scale <= (pBtn.x - pBtn.ox + pBtn.w) and
+        _mouse.y / _scale >= pBtn.y - pBtn.oy and
+        _mouse.y / _scale <= (pBtn.y - pBtn.oy + pBtn.h) then
 
         pBtn.hover = true
         --imgCurseurActu = _img.curseurSelect
@@ -190,6 +197,10 @@ function btnUpdate(pBtn, pEvent, pVar)
             pBtn.son:stop()
             pBtn.son:play()
         end
+
+        if pBtn.type == "chkbox" then
+            pBtn.checked = not pBtn.checked
+        end
         
         if pEvent ~= nil then 
             pBtn.pressed = false
@@ -207,6 +218,7 @@ function newBtn(type, x, y, ...)
 
     -- btn img          => (image, imageHover, imagePressed, text, font, color)
     -- btn txt          => (texte, font, color, colorHover, colorPressed)
+    -- btn chkbox       => (imgNoCheck, imgCheck, check)
 
     local tab = {}
     tab.x = x
@@ -249,6 +261,15 @@ function newBtn(type, x, y, ...)
 
         if p[5] ~= nil then tab.colorPressed = p[5]
         else tab.colorPressed = {1,1,1,1} end
+    elseif type == "chkbox" then
+        
+        tab.imgNoCheck = p[1]
+        tab.imgCheck = p[2]
+        tab.img = tab.imgNoCheck
+        tab.w = tab.img:getWidth()
+        tab.h = tab.img:getHeight()
+
+        if p[3] ~= nil then tab.checked = p[3] else tab.checked = false end
     end
     
     -- Fonctions
