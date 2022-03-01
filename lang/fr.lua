@@ -20,6 +20,22 @@ lang.musique = "Musiques"
 lang.sons = "Sons"
 lang.fullscreen = "Plein écran"
 
+-- =========
+-- Controles
+-- =========
+
+lang.infoControles = [[
+Souris : Tourne le Titan dans la direction souhaitée.
+
+Lorsqu'une compétence est activée, celle-ci s'effectue dans la direction dans laquelle se trouve le Titan.
+
+Clic Gauche : Frappe le sol avec le poing pour infliger des dégâts aux soldats proches.
+
+Clic Droit : Frappe le sol avec les deux poings pour infliger des dégâts et faire tomber les soldats de la ligne.
+
+Barre d'espace : Martèle le sol pour provoquer un tremblement de terre, ce qui inflige des dégâts et fait tomber tous les soldats à l'écran.
+]]
+
 -- =======
 -- Credits
 -- =======

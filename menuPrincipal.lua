@@ -61,7 +61,7 @@ function menuPrincipal.init()
     btn.credits = newBtn("img", xBtn, btn.controles.y + separationY, _img.btn, _img.btnHover, _img.btnPressed, "credits")
     btn.quitter = newBtn("img", xBtn, btn.credits.y + separationY, _img.btn, _img.btnHover, _img.btnPressed, "quitter")
 
-    btn.retourMenuPrincipal = newBtn("img", _ecran.w - _img.btn:getWidth() - 25, _ecran.h - _img.btn:getHeight() - 15, _img.btn, _img.btnHover, _img.btnPressed, "retour")
+    btn.retourMenuPrincipal = newBtn("img", _ecran.w - _img.btn:getWidth() - 10, _ecran.h - _img.btn:getHeight() - 10, _img.btn, _img.btnHover, _img.btnPressed, "retour")
 
     local l, c, xCadre, yCadre
     
@@ -82,6 +82,18 @@ function menuPrincipal.init()
     txt.sons = newTxt("sons", _fonts.texte, btn.sons.x + 40, btn.sons.y - 8)
     btn.fullscreen = newBtn("chkbox", xCadre + 25, btn.sons.y + _fonts.texte:getHeight("W") + 5, img.checkbox, img.checkboxChecked, false)
     txt.fullscreen = newTxt("fullscreen", _fonts.texte, btn.fullscreen.x + 40, btn.fullscreen.y - 8)
+
+    -- =========
+    -- Controles
+    -- =========
+
+    l = 13
+    c = 25
+    xCadre = centrageCadre("x", c)
+    yCadre = 15
+    cadre.controles = newCadre(xCadre, yCadre, c, l)
+    txt.controles = newTxt("infoControles", _fonts.texte, xCadre + 25, yCadre + 25, {0,0,0,1}, cadre.controles.w - 50, "left")
+
 
     -- =======
     -- Crédits
@@ -228,7 +240,9 @@ function menuPrincipal.draw()
         drawVoile(alphaVoile)
 
         if affichePage then
+            cadre.controles:draw()
             btn.retourMenuPrincipal:draw()
+            txt.controles:print()
         end
     elseif _etatActu == "credits" then 
         spr.fondMenu:draw()
