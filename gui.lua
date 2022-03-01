@@ -296,10 +296,10 @@ end
 
 function drawSprite(tab)
     love.graphics.setColor(1,1,1,tab.alpha)
-    love.graphics.draw(tab.img, tab.x, tab.y, 0, tab.sx, tab.sy)
+    love.graphics.draw(tab.img, tab.x, tab.y, tab.r, tab.sx, tab.sy, tab.ox, tab.oy)
 end 
 
-function newSprite(image, x, y, alpha)
+function newSprite(image, x, y, alpha, oxy)
     local tab = {}
 
     tab.img = image    
@@ -308,6 +308,16 @@ function newSprite(image, x, y, alpha)
     tab.color = {}
     tab.sx = 1
     tab.sy = 1
+
+    if oxy then 
+        tab.ox = image:getWidth() / 2
+        tab.oy = image:getHeight() / 2
+    else 
+        tab.ox = 0
+        tab.oy = 0
+    end 
+
+    tab.r = 0
 
     if alpha ~= nil then 
         tab.alpha = alpha

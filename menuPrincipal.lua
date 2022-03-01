@@ -184,7 +184,7 @@ function menuPrincipal.update(dt)
         if _fade.sortie == "menuPrincipal" then 
             changeEtat("menuPrincipal") 
         elseif _fade.sortie == "jouer" then
-
+            changeScene(_scenes.jeu)
         end 
         fadeIn()
     end
