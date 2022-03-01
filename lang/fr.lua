@@ -46,4 +46,12 @@ lang.creditsTxt3 = "Bsy (Graphismes, Gamedesign)"
 lang.creditsTxt4 = "Lysenti (Programmation Shaders)"
 lang.creditsTxt5 = "Raphytator (Programmation, Gamedesign, Musique)"
 
+-- ===
+-- Jeu
+-- ===
+
+lang.clicGauche = "Clic gauche"
+lang.clicDroit = "Clic droit"
+lang.barreEspace = "Barre d'espace"
+
 return lang

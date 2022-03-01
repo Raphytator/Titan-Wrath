@@ -22,6 +22,24 @@ function jeu.init()
     img.trouTerrain = love.graphics.newImage("img/trouTerrain.png")
     sprite.trouTerrain = newSprite(img.trouTerrain, (_ecran.w - img.trouTerrain:getWidth()) / 2, 235)
 
+    img.boutonCompetence = love.graphics.newImage("img/btnCompetence.png")
+    
+    local yBtnComp = (212 - (64 + 5)*3) / 2
+    sprite.competence = {}
+    sprite.competence[1] = newSprite(love.graphics.newImage("img/Competence1.png"), 5, yBtnComp)
+    sprite.competence[2] = newSprite(love.graphics.newImage("img/Competence2.png"), 5, sprite.competence[1].y + 64 + 5)
+    sprite.competence[3] = newSprite(love.graphics.newImage("img/Competence3.png"), 5, sprite.competence[2].y + 64 + 5)
+
+    txt.competences = {}
+    txt.competences[1] = newTxt("clicGauche", _fonts.texte, sprite.competence[1].x + 75, sprite.competence[1].y + 10)
+    txt.competences[2] = newTxt("clicDroit", _fonts.texte, sprite.competence[2].x + 75, sprite.competence[2].y + 10)
+    txt.competences[3] = newTxt("barreEspace", _fonts.texte, sprite.competence[3].x + 75, sprite.competence[3].y + 10)
+
+
+
+    -- =====
+    -- TITAN
+    -- =====
     
     img.titan = {}
     img.titan[1] = love.graphics.newImage("img/Titan2.png")
@@ -31,7 +49,6 @@ function jeu.init()
     img.titan[5] = img.titan[1]
 
     sprite.titan = newSprite(img.titan[3], sprite.trouTerrain.x + img.titan[3]:getWidth() / 2, 40 + img.titan[3]:getHeight() / 2, 1, true)
-
 
     titan.cooldown1Max = 2.5
     titan.cooldown2Max = 5
@@ -66,12 +83,14 @@ end
 ]]
 
 function jeu.update(dt)
+
     if not _fade.fadeIn and not _fade.fadeOut then
         local angleMouse
         local pi5 = math.pi / 5
-        if _mouse.y >= 240 then 
+        local posY = 265
+        if _mouse.y >= posY then 
 
-            angleMouse = math.abs(math.angle(mid, 240, _mouse.x, _mouse.y))
+            angleMouse = math.abs(math.angle(mid, posY, _mouse.x, _mouse.y))
 
             if angleMouse < pi5 then
                 titan.direction = 1
@@ -121,6 +140,14 @@ function jeu.draw()
     sprite.trouTerrain:draw()
     sprite.titan:draw()
 
+
+
+    for i=1, #sprite.competence do 
+        local sp = sprite.competence[i]
+        love.graphics.draw(img.boutonCompetence, sp.x, sp.y)
+        sp:draw()
+        txt.competences[i]:print()
+    end
 end 
 
 --[[
