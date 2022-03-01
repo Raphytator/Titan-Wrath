@@ -330,6 +330,28 @@ function newSprite(image, x, y, alpha, oxy)
     return tab
 end 
 
+function updateQuadSprite(pSpr, pSize)
+    pSpr.quad = love.graphics.newQuad(0, 0, pSize, pSpr.img:getHeight(), pSpr.img:getWidth(), pSpr.img:getHeight())
+end 
+
+function drawQuadSprite(pSpr)
+    love.graphics.draw(pSpr.img, pSpr.quad, pSpr.x, pSpr.y)
+end 
+
+function newQuadSprite(image, x, y)
+    local tab = {}
+
+    tab.img = image    
+    tab.x = x 
+    tab.y = y 
+    tab.quad = love.graphics.newQuad(0, 0, image:getWidth(), image:getHeight(), image:getWidth(), image:getHeight())
+
+    tab.draw = drawQuadSprite
+    tab.update = updateQuadSprite
+
+    return tab
+end 
+
 --[[
  ██████╗ █████╗ ██████╗ ██████╗ ███████╗███████╗
 ██╔════╝██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔════╝
