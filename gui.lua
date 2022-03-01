@@ -174,7 +174,7 @@ function btnDraw(pBtn)
     end
 end
 
-function btnUpdate(pBtn, pEvent, pVar)               
+function btnUpdate(pBtn, pEvent, pVar)  
     if _mouse.x / _scale>= pBtn.x - pBtn.ox and
         _mouse.x / _scale <= (pBtn.x - pBtn.ox + pBtn.w) and
         _mouse.y / _scale >= pBtn.y - pBtn.oy and
@@ -193,9 +193,8 @@ function btnUpdate(pBtn, pEvent, pVar)
         pBtn.pressed = true
         pBtn.hover = false
 
-        if pBtn.son ~= nil then
-            pBtn.son:stop()
-            pBtn.son:play()
+        if pBtn.sfx ~= nil then
+            playSound(pBtn.sfx)
         end
 
         if pBtn.type == "chkbox" then
@@ -212,6 +211,10 @@ function btnUpdate(pBtn, pEvent, pVar)
         end
     end
     if not love.mouse.isDown(1) then pBtn.pressed = false end
+end
+
+function btnAddSfx(pBtn, pSfx)
+    pBtn.sfx = pSfx
 end
 
 function newBtn(type, x, y, ...)
@@ -231,6 +234,7 @@ function newBtn(type, x, y, ...)
     tab.sy = 1
     tab.ox = 0
     tab.oy = 0   
+    tab.sfx = _sfx.clic
 
     local p = {...}
         
@@ -274,7 +278,8 @@ function newBtn(type, x, y, ...)
     
     -- Fonctions
     tab.draw = btnDraw
-    tab.update = btnUpdate          
+    tab.update = btnUpdate
+    tab.addSfx = btnAddSfx    
 
     return tab
 end

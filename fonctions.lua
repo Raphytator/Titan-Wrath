@@ -30,3 +30,10 @@ function inArray(pTab, pValue)
     end
     return false
 end
+
+function playSound(pSon)
+    if _sons then 
+        pSon:stop()
+        pSon:play()
+    end 
+end 

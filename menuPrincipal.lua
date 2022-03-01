@@ -157,8 +157,8 @@ function menuPrincipal.update(dt)
                 btn.retourMenuPrincipal:update(changeEtat, {"retourMenuPrincipal"})
 
                 if _etatActu == "options" then 
-                    btn.musique:update()
-                    btn.sons:update()
+                    btn.musique:update(menuPrincipal.modifMusiqueSon, {"musique"})
+                    btn.sons:update(menuPrincipal.modifMusiqueSon, {"sons"})
                     btn.fullscreen:update(menuPrincipal.passageFullscreen)
                 end
             end 
@@ -289,5 +289,14 @@ function menuPrincipal.passageFullscreen()
     _scale = love.graphics.getWidth() / _ecran.w 
     
 end
+
+function menuPrincipal.modifMusiqueSon(pType)
+    if pType == "musique" then
+        _musique = not _musique
+        if _musiqueActu ~= nil then _musiqueActu:stop() end
+    elseif pType == "sons" then
+        _sons = not _sons
+    end
+end 
 
 return menuPrincipal

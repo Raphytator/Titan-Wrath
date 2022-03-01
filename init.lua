@@ -3,6 +3,7 @@ function init()
     initVariables()
     initRoot()
     initImg()
+    initSfx()
     initCadre()
     initFonts()
     initScenes()
@@ -23,6 +24,9 @@ function initVariables()
     _mouse = { x = 0, y = 0}
     _quad = {}
     _scale = 1
+    _musique = true
+    _sons = true
+    _musiqueActu = nil
     fadeInitialisation()
 end 
 
@@ -37,6 +41,11 @@ function initImg()
     _img.btn = love.graphics.newImage("img/bouton.png")
     _img.btnHover = love.graphics.newImage("img/boutonHover.png")
     _img.btnPressed = love.graphics.newImage("img/boutonPressed.png")
+end 
+
+function initSfx()
+    _sfx = {}
+    _sfx.clic = love.audio.newSource("sfx/clic.wav", "static")
 end 
 
 function initFonts()
