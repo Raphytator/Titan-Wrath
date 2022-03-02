@@ -73,7 +73,7 @@ function jeu.init()
     local xBtn = (_ecran.w - _img.btn:getWidth()) / 2
     local yBtn = 400
     btn.rejouer = newBtn("img", xBtn, yBtn, _img.btn, _img.btnHover, _img.btnPressed, "recommencer")
-
+    btn.menuPrincipal = newBtn("img", xBtn, btn.rejouer.y + _img.btn:getHeight() + 10, _img.btn, _img.btnHover, _img.btnPressed, "menuPrincipal")
 
 end 
 
@@ -158,6 +158,7 @@ function jeu.update(dt)
 
             if tween.gameOver.finished then 
                 btn.rejouer:update(fadeOut, {"restart"})
+                btn.menuPrincipal:update(fadeOut, {"menuPrincipal"})
             end
         end
     end 
@@ -168,6 +169,9 @@ function jeu.update(dt)
 
         if _fade.sortie == "restart" then 
             jeu.nouveauJeu()
+        elseif _fade.sortie == "menuPrincipal" then
+            changeScene(_scenes.menuPrincipal)
+            changeEtat("menuPrincipal")
         elseif _fade.sortie == "victory" then
             
         end 
@@ -211,6 +215,7 @@ function jeu.draw()
 
         if tween.gameOver.finished then 
             btn.rejouer:draw()
+            btn.menuPrincipal:draw()
         end
     end 
 end 

@@ -55,6 +55,7 @@ lang.clicDroit = "Right click"
 lang.barreEspace = "Spacebar"
 lang.gameOver = "Game Over"
 lang.recommencer = "Retry"
+lang.menuPrincipal = "Main menu"
 
 
 return lang

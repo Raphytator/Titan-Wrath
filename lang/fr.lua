@@ -55,5 +55,6 @@ lang.clicDroit = "Clic droit"
 lang.barreEspace = "Barre d'espace"
 lang.gameOver = "Vous avez perdu !"
 lang.recommencer = "Recommencer"
+lang.menuPrincipal = "Menu principal"
 
 return lang
