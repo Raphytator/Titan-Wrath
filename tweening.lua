@@ -10,6 +10,12 @@ function tweenUpdate(pTween, dt)
     pTween.actu = tween_quadratic_easingOut(pTween.timer, pTween.depart, pTween.distance, pTween.duree)
 end 
 
+function tweenReset(pTween)
+    pTween.timer = 0
+    pTween.actu = pTween.depart
+    pTween.finished = false
+end 
+
 function newTween(pDepart, pDistance, pDuree)
     local tab = {}
 
@@ -21,6 +27,7 @@ function newTween(pDepart, pDistance, pDuree)
     tab.finished = false
 
     tab.update = tweenUpdate
+    tab.reset = tweenReset
 
     return tab
 end 

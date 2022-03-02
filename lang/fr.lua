@@ -53,5 +53,7 @@ lang.creditsTxt5 = "Raphytator (Programmation, Gamedesign, Musique)"
 lang.clicGauche = "Clic gauche"
 lang.clicDroit = "Clic droit"
 lang.barreEspace = "Barre d'espace"
+lang.gameOver = "Vous avez perdu !"
+lang.recommencer = "Recommencer"
 
 return lang

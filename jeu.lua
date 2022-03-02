@@ -14,9 +14,13 @@ local img = {}
 local sprite = {}
 local spriteQuad = {}
 local txt = {}
+local tween = {}
+local btn = {}
 
 local titan = {}
 local mid = _ecran.w / 2
+local alphaVoile
+local departGameOver
 
 function jeu.init()
     sprite.terrain = newSprite(love.graphics.newImage("img/terrain.png"), 0, 0)
@@ -60,6 +64,17 @@ function jeu.init()
     titan.pvMax = 500
     
 
+    -- =========
+    -- Game over
+    -- =========
+    departGameOver = 0 - _fonts.gameOver:getHeight("W") - 10
+    txt.gameOver = newTxt("gameOver", _fonts.gameOver, 0, departGameOver, {.8,.8,.8,1}, _ecran.w, "center")
+    tween.gameOver = newTween(departGameOver, 400, 3)
+    local xBtn = (_ecran.w - _img.btn:getWidth()) / 2
+    local yBtn = 400
+    btn.rejouer = newBtn("img", xBtn, yBtn, _img.btn, _img.btnHover, _img.btnPressed, "recommencer")
+
+
 end 
 
 --[[
@@ -89,45 +104,76 @@ end
 function jeu.update(dt)
 
     if not _fade.fadeIn and not _fade.fadeOut then
-        local angleMouse
-        local pi5 = math.pi / 5
-        local posY = 265
-        if _mouse.y >= posY then 
+        if _etatActu == "jeu" then 
+            local angleMouse
+            local pi5 = math.pi / 5
+            local posY = 265
+            if _mouse.y >= posY then 
 
-            angleMouse = math.abs(math.angle(mid, posY, _mouse.x, _mouse.y))
+                angleMouse = math.abs(math.angle(mid, posY, _mouse.x, _mouse.y))
 
-            if angleMouse < pi5 then
-                titan.direction = 1
-            elseif angleMouse >= pi5 and angleMouse < pi5 * 2 then
-                titan.direction = 2
-            elseif angleMouse >= pi5 * 2 and angleMouse < pi5 * 3 then
-                titan.direction = 3
-            elseif angleMouse >= pi5 * 3 and angleMouse < pi5 * 4 then
-                titan.direction = 4
-            else 
-                titan.direction = 5
+                if angleMouse < pi5 then
+                    titan.direction = 1
+                elseif angleMouse >= pi5 and angleMouse < pi5 * 2 then
+                    titan.direction = 2
+                elseif angleMouse >= pi5 * 2 and angleMouse < pi5 * 3 then
+                    titan.direction = 3
+                elseif angleMouse >= pi5 * 3 and angleMouse < pi5 * 4 then
+                    titan.direction = 4
+                else 
+                    titan.direction = 5
+                end
+                            
+            end 
+
+            if titan.direction == 1 then
+                titan.flip = -1
+            elseif titan.direction == 2 then
+                titan.flip = -1
+            elseif titan.direction == 3 then
+                titan.flip = 1
+            elseif titan.direction == 4 then
+                titan.flip = 1
+            elseif titan.direction == 5 then
+                titan.flip = 1
             end
-                        
-        end 
 
-        if titan.direction == 1 then
-            titan.flip = -1
-        elseif titan.direction == 2 then
-            titan.flip = -1
-        elseif titan.direction == 3 then
-            titan.flip = 1
-        elseif titan.direction == 4 then
-            titan.flip = 1
-        elseif titan.direction == 5 then
-            titan.flip = 1
+            sprite.titan.img = img.titan[titan.direction]
+            sprite.titan.sx = titan.flip
+
+            -- Santé Titan
+            spriteQuad.barreSante:update((spriteQuad.barreSante.img:getWidth() / titan.pvMax) * titan.pv)
+
+            -- Gameover
+            if titan.pv <= 0 then 
+                changeEtat("gameOver")
+            end 
+        elseif _etatActu == "gameOver" then 
+            tween.gameOver:update(dt)
+            txt.gameOver.y = tween.gameOver.actu
+            
+            if alphaVoile < .7 then 
+                alphaVoile = alphaVoile + dt
+            end
+
+            if tween.gameOver.finished then 
+                btn.rejouer:update(fadeOut, {"restart"})
+            end
         end
-
-        sprite.titan.img = img.titan[titan.direction]
-        sprite.titan.sx = titan.flip
-
-        -- Santé Titan
-        spriteQuad.barreSante:update((spriteQuad.barreSante.img:getWidth() / titan.pvMax) * titan.pv)
     end 
+
+    if _fade.fadeEnd then 
+        _fade.fadeEnd = false 
+        _fade.alphaTransition = 0
+
+        if _fade.sortie == "restart" then 
+            jeu.nouveauJeu()
+        elseif _fade.sortie == "victory" then
+            
+        end 
+        fadeIn()
+    end
+    
 end 
 
 --[[
@@ -158,6 +204,15 @@ function jeu.draw()
         sp:draw()
         txt.competences[i]:print()
     end
+
+    if _etatActu == "gameOver" then 
+        drawVoile(alphaVoile)
+        txt.gameOver:print()
+
+        if tween.gameOver.finished then 
+            btn.rejouer:draw()
+        end
+    end 
 end 
 
 --[[
@@ -175,7 +230,7 @@ function jeu.keypressed(key)
     if key == "up" then 
         if titan.pv < titan.pvMax then titan.pv = titan.pv + 10 end 
     elseif key == "down" then 
-        if titan.pv > 0 then titan.pv = titan.pv - 10 end
+        if titan.pv > 0 then titan.pv = titan.pv - 100 end
     end 
 
 end
@@ -199,6 +254,11 @@ function jeu.nouveauJeu()
     titan.cooldown3 = 0
     titan.flip = 1
 
+    tween.gameOver:reset()
+    txt.gameOver.y = departGameOver
+
+    alphaVoile = 0
+    changeEtat("jeu")
     fadeIn()
 end
 

@@ -53,6 +53,8 @@ lang.creditsTxt5 = "Raphytator (Programing, Gamedesign, Music)"
 lang.clicGauche = "Left click"
 lang.clicDroit = "Right click"
 lang.barreEspace = "Spacebar"
+lang.gameOver = "Game Over"
+lang.recommencer = "Retry"
 
 
 return lang
