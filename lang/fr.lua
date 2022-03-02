@@ -41,8 +41,8 @@ Barre d'espace : Martèle le sol pour provoquer un tremblement de terre, ce qui 
 -- =======
 
 lang.creditsTxt1 = "Jeu développé avec Love2D pour la Löve Gamejam 2022"
-lang.creditsTxt2 = "Babbou (Graphismes, Gamedesign)"
-lang.creditsTxt3 = "Bsy (Graphismes, Gamedesign)"
+lang.creditsTxt2 = "Babbou (Graphismes)"
+lang.creditsTxt3 = "Bsy (Graphismes)"
 lang.creditsTxt4 = "Lysenti (Programmation Shaders)"
 lang.creditsTxt5 = "Raphytator (Programmation, Gamedesign, Musique)"
 
@@ -56,5 +56,6 @@ lang.barreEspace = "Barre d'espace"
 lang.gameOver = "Vous avez perdu !"
 lang.recommencer = "Recommencer"
 lang.menuPrincipal = "Menu principal"
+lang.vague = "Vague"
 
 return lang

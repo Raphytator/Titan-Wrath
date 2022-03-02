@@ -42,9 +42,9 @@ function txtPrint(pTxt)
     love.graphics.setFont(pTxt.font)
     love.graphics.setColor(pTxt.color)
     if pTxt.align == nil then 
-        love.graphics.print(getText(pTxt.txt), pTxt.x, pTxt.y)
+        love.graphics.print(getText(pTxt.txt)..pTxt.txtSup, pTxt.x, pTxt.y)
     else 
-        love.graphics.printf(getText(pTxt.txt), pTxt.x, pTxt.y, pTxt.limit, pTxt.align)
+        love.graphics.printf(getText(pTxt.txt)..pTxt.txtSup, pTxt.x, pTxt.y, pTxt.limit, pTxt.align)
     end 
     love.graphics.setColor(1,1,1,1)
 end 
@@ -53,6 +53,7 @@ function newTxt(pText, pFont, pX, pY, pColor, pLimit, pAlign)
     local txt = {}
 
     txt.txt = tostring(pText)
+    txt.txtSup = ""
     txt.font = pFont
     txt.x = pX 
     txt.y = pY

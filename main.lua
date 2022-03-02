@@ -48,3 +48,9 @@ function love.keypressed(key)
         _sceneActu.keypressed(key)
     end
 end 
+
+function love.mousepressed(x, y, button, istouch, presses)
+    if _sceneActu.mousepressed ~= nil then
+        _sceneActu.mousepressed(x, y, button, istouch, presses)
+    end 
+end 

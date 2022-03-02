@@ -21,6 +21,9 @@ local titan = {}
 local mid = _ecran.w / 2
 local alphaVoile
 local departGameOver
+local vague = {}
+
+
 
 function jeu.init()
     sprite.terrain = newSprite(love.graphics.newImage("img/terrain.png"), 0, 0)
@@ -44,23 +47,57 @@ function jeu.init()
     sprite.receptacleSante = newSprite(img.receptacleSante, (_ecran.w - img.receptacleSante:getWidth()) / 2, 25)
     spriteQuad.barreSante = newQuadSprite(love.graphics.newImage("img/barreSante.png"), sprite.receptacleSante.x, sprite.receptacleSante.y)
 
+    txt.vague = newTxt("vague", _fonts.gameOver, 0, 300, {.1, .1, .1, 0}, _ecran.w, "center")
 
     -- =====
     -- TITAN
     -- =====
+
+    titan.etats = {
+        STAND = 1,
+        POING = 2,
+        VAGUE = 3,
+        QUAKE = 4,
+        DEAD = 5
+    }
     
     img.titan = {}
-    img.titan[1] = love.graphics.newImage("img/Titan2.png")
-    img.titan[2] = love.graphics.newImage("img/Titan3.png")
-    img.titan[3] = love.graphics.newImage("img/Titan1.png")
-    img.titan[4] = img.titan[2]
-    img.titan[5] = img.titan[1]
+    img.titan[titan.etats.STAND] = {
+        [1] = { love.graphics.newImage("img/Titan2.png") },
+        [2] = { love.graphics.newImage("img/Titan3.png") },
+        [3] = { love.graphics.newImage("img/Titan1.png") },
+        [4] = { love.graphics.newImage("img/Titan3.png") },
+        [5] = { love.graphics.newImage("img/Titan2.png") }
+    }
 
-    img.titanDead = {}
-    img.titanDead[1] = love.graphics.newImage("img/TitanDead1.png")
-    img.titanDead[2] = love.graphics.newImage("img/TitanDead2.png")
+    img.titan[titan.etats.POING] = {
+        [1] = { love.graphics.newImage("img/Titan2Competence1Frame1.png"), love.graphics.newImage("img/Titan2Competence1Frame2.png")},
+        [2] = { love.graphics.newImage("img/Titan3Competence1Frame1.png"), love.graphics.newImage("img/Titan3Competence1Frame2.png") },
+        [3] = { love.graphics.newImage("img/Titan1Competence1Frame1.png"), love.graphics.newImage("img/Titan1Competence1Frame2.png") },
+        [4] = { love.graphics.newImage("img/Titan3Competence1Frame1.png"), love.graphics.newImage("img/Titan3Competence1Frame2.png") },
+        [5] = { love.graphics.newImage("img/Titan2Competence1Frame1.png"), love.graphics.newImage("img/Titan2Competence1Frame2.png") }
+    }
 
-    sprite.titan = newSprite(img.titan[3], sprite.trouTerrain.x + img.titan[3]:getWidth() / 2, 40 + img.titan[3]:getHeight() / 2, 1, true)
+    img.titan[titan.etats.VAGUE] = {
+        [1] = { love.graphics.newImage("img/Titan2Competence2Frame1.png"), love.graphics.newImage("img/Titan2Competence2Frame2.png")},
+        [2] = { love.graphics.newImage("img/Titan3Competence2Frame1.png"), love.graphics.newImage("img/Titan3Competence2Frame2.png") },
+        [3] = { love.graphics.newImage("img/Titan1Competence2Frame1.png"), love.graphics.newImage("img/Titan1Competence2Frame2.png") },
+        [4] = { love.graphics.newImage("img/Titan3Competence2Frame1.png"), love.graphics.newImage("img/Titan3Competence2Frame2.png") },
+        [5] = { love.graphics.newImage("img/Titan2Competence2Frame1.png"), love.graphics.newImage("img/Titan2Competence2Frame2.png") }
+    }
+
+    img.titan[titan.etats.QUAKE] = {
+        [1] = { love.graphics.newImage("img/Titan1Competence3Frame1.png"), love.graphics.newImage("img/Titan1Competence3Frame2.png")}
+    }
+
+    img.titan[titan.etats.DEAD] = {
+        [1] = {
+            love.graphics.newImage("img/TitanDead1.png"),
+            love.graphics.newImage("img/TitanDead2.png")
+        }
+    }
+
+    sprite.titan = newSprite(img.titan[1][1][1], sprite.trouTerrain.x + img.titan[1][1][1]:getWidth() / 2, 40 + img.titan[1][1][1]:getHeight() / 2, 1, true)
 
     titan.cooldown1Max = 2.5
     titan.cooldown2Max = 5
@@ -143,25 +180,68 @@ function jeu.update(dt)
                 titan.flip = 1
             end
 
-            sprite.titan.img = img.titan[titan.direction]
             sprite.titan.sx = titan.flip
+             
+            if vague.affichage then 
+                local vitesseAlpha = .5
+                if vague.etat == "apparition" then
+                    if vague.alpha < 1 then 
+                        vague.alpha = vague.alpha + dt / vitesseAlpha
+                        txt.vague.color[4] = vague.alpha
+                    else 
+                        vague.etat = "standBy"
+                    end 
+                elseif vague.etat == "standBy" then 
+                    if vague.timer < 2.5 then 
+                        vague.timer = vague.timer + dt
+                    else 
+                        vague.etat = "disparition"
+                    end 
+                elseif vague.etat == "disparition" then 
+                    if vague.alpha > 0 then 
+                        vague.alpha = vague.alpha - dt / vitesseAlpha
+                        txt.vague.color[4] = vague.alpha
+                    else 
+                        vague.affichage = false
+                    end 
+                end                
+            else 
 
-            -- Santé Titan
-            spriteQuad.barreSante:update((spriteQuad.barreSante.img:getWidth() / titan.pvMax) * titan.pv)
+                -- Santé Titan
+                spriteQuad.barreSante:update((spriteQuad.barreSante.img:getWidth() / titan.pvMax) * titan.pv)
 
-            -- Gameover
-            if titan.pv <= 0 then 
-                changeEtat("gameOver")
-                titan.frame = 1
-                sprite.titan.img = img.titanDead[titan.frame]
+                -- Gameover
+                if titan.pv <= 0 then 
+                    changeEtat("gameOver")
+                    titan.etat = titan.etats.DEAD
+                    titan.frame = 1
+                    titan.direction = 1
+                    titan.vitesseFrame = 3
+                end             
+
+                -- Compétences 
+                if titan.competenceActive then
+                    if titan.frame > #img.titan[titan.direction][titan.etat] then 
+                        titan.competenceActive = false 
+                        titan.frame = 1
+                        titan.etat = titan.etats.STAND
+                    end 
+                end 
+
+                -- Vagues de soldats
+
+                -- Comportement soldats 
+
+                -- Vaches 
+
+
             end 
+
         elseif _etatActu == "gameOver" then 
             tween.gameOver:update(dt)
             txt.gameOver.y = tween.gameOver.actu
 
-            if titan.frame < 2 then titan.frame = titan.frame + dt * 3 end
-
-            sprite.titan.img = img.titanDead[math.floor(titan.frame)]
+            
 
             if alphaVoile < .7 then 
                 alphaVoile = alphaVoile + dt / tween.gameOver.duree * .7
@@ -172,6 +252,9 @@ function jeu.update(dt)
                 btn.menuPrincipal:update(fadeOut, {"menuPrincipal"})
             end
         end
+
+        if titan.frame < #img.titan[titan.etat][titan.direction] then titan.frame = titan.frame + dt * titan.vitesseFrame end
+        sprite.titan.img = img.titan[titan.etat][titan.direction][math.floor(titan.frame)]
     end 
 
     if _fade.fadeEnd then 
@@ -220,6 +303,10 @@ function jeu.draw()
         txt.competences[i]:print()
     end
 
+    if vague.affichage then 
+        txt.vague:print()
+    end 
+
     if _etatActu == "gameOver" then 
         drawVoile(alphaVoile)
         txt.gameOver:print()
@@ -241,12 +328,41 @@ end
                                     
 ]]
 
-
 function jeu.keypressed(key)
     if key == "space" then 
+
+        if not vague.affichage and not titan.competenceActive and _etatActu == "jeu" then
+            titan.competenceActive = true
+            jeu.activeCompetence(titan.etats.QUAKE)
+        end
+
     elseif key == "down" then 
         titan.pv = titan.pv - 250
     end 
+end
+
+--[[
+███╗   ███╗ ██████╗ ██╗   ██╗███████╗███████╗██████╗ ██████╗ ███████╗███████╗███████╗███████╗██████╗ 
+████╗ ████║██╔═══██╗██║   ██║██╔════╝██╔════╝██╔══██╗██╔══██╗██╔════╝██╔════╝██╔════╝██╔════╝██╔══██╗
+██╔████╔██║██║   ██║██║   ██║███████╗█████╗  ██████╔╝██████╔╝█████╗  ███████╗███████╗█████╗  ██║  ██║
+██║╚██╔╝██║██║   ██║██║   ██║╚════██║██╔══╝  ██╔═══╝ ██╔══██╗██╔══╝  ╚════██║╚════██║██╔══╝  ██║  ██║
+██║ ╚═╝ ██║╚██████╔╝╚██████╔╝███████║███████╗██║     ██║  ██║███████╗███████║███████║███████╗██████╔╝
+╚═╝     ╚═╝ ╚═════╝  ╚═════╝ ╚══════╝╚══════╝╚═╝     ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚══════╝╚═════╝ 
+                                                                                                     
+]]
+
+function jeu.mousepressed(x, y, button, istouch, presses)
+
+    if not vague.affichage and not titan.competenceActive and _etatActu == "jeu" then
+        titan.competenceActive = true
+        
+        if button == 1 then 
+            jeu.activeCompetence(titan.etats.POING)
+        elseif button == 2 then 
+            jeu.activeCompetence(titan.etats.VAGUE)
+        end
+    end
+
 end
 
 --[[
@@ -267,15 +383,39 @@ function jeu.nouveauJeu()
     titan.cooldown2 = 0
     titan.cooldown3 = 0
     titan.flip = 1
+    titan.etat = titan.etats.STAND
     titan.frame = 1
-    sprite.titan.img = img.titan[titan.direction]
+    titan.vitesseFrame = 1.5
+    titan.competenceActive = false
+    sprite.titan.img = img.titan[titan.etat][titan.direction][titan.frame]
+    spriteQuad.barreSante:update((spriteQuad.barreSante.img:getWidth() / titan.pvMax) * titan.pv) -- Santé Titan
 
     tween.gameOver:reset()
     txt.gameOver.y = departGameOver
+
+    vague.actu = 1
+
+    jeu.lancementVague()
 
     alphaVoile = 0
     changeEtat("jeu")
     fadeIn()
 end
+
+function jeu.lancementVague()
+    vague.affichage = true
+    vague.etat = "apparition"
+    vague.alpha = 0
+    vague.timer = 0
+    txt.vague.txtSup = " "..vague.actu
+    txt.vague.color[4] = 0
+end 
+
+function jeu.activeCompetence(pComp)
+
+    titan.etat = pComp
+    titan.frame = 1
+
+end 
 
 return jeu

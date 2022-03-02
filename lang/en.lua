@@ -41,8 +41,8 @@ Spacebar: Pounds the ground to cause an earthquake, dealing damage and knocking 
 -- =======
 
 lang.creditsTxt1 = "Developed with Love2D for Löve Gamejam 2022"
-lang.creditsTxt2 = "Babbou (Graphics, Gamedesign)"
-lang.creditsTxt3 = "Bsy (Graphics, Gamedesign)"
+lang.creditsTxt2 = "Babbou (Graphics)"
+lang.creditsTxt3 = "Bsy (Graphics)"
 lang.creditsTxt4 = "Lysenti (Shaders programing)"
 lang.creditsTxt5 = "Raphytator (Programing, Gamedesign, Music)"
 
@@ -56,6 +56,7 @@ lang.barreEspace = "Spacebar"
 lang.gameOver = "Game Over"
 lang.recommencer = "Retry"
 lang.menuPrincipal = "Main menu"
+lang.vague = "Wave"
 
 
 return lang
