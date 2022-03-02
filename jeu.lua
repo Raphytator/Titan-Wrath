@@ -56,6 +56,10 @@ function jeu.init()
     img.titan[4] = img.titan[2]
     img.titan[5] = img.titan[1]
 
+    img.titanDead = {}
+    img.titanDead[1] = love.graphics.newImage("img/TitanDead1.png")
+    img.titanDead[2] = love.graphics.newImage("img/TitanDead2.png")
+
     sprite.titan = newSprite(img.titan[3], sprite.trouTerrain.x + img.titan[3]:getWidth() / 2, 40 + img.titan[3]:getHeight() / 2, 1, true)
 
     titan.cooldown1Max = 2.5
@@ -147,11 +151,17 @@ function jeu.update(dt)
             -- Gameover
             if titan.pv <= 0 then 
                 changeEtat("gameOver")
+                titan.frame = 1
+                sprite.titan.img = img.titanDead[titan.frame]
             end 
         elseif _etatActu == "gameOver" then 
             tween.gameOver:update(dt)
             txt.gameOver.y = tween.gameOver.actu
-            
+
+            if titan.frame < 2 then titan.frame = titan.frame + dt * 3 end
+
+            sprite.titan.img = img.titanDead[math.floor(titan.frame)]
+
             if alphaVoile < .7 then 
                 alphaVoile = alphaVoile + dt
             end
@@ -258,6 +268,8 @@ function jeu.nouveauJeu()
     titan.cooldown2 = 0
     titan.cooldown3 = 0
     titan.flip = 1
+    titan.frame = 1
+    sprite.titan.img = img.titan[titan.direction]
 
     tween.gameOver:reset()
     txt.gameOver.y = departGameOver
