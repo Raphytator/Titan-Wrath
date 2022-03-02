@@ -73,7 +73,7 @@ function jeu.init()
     -- =========
     departGameOver = 0 - _fonts.gameOver:getHeight("W") - 10
     txt.gameOver = newTxt("gameOver", _fonts.gameOver, 0, departGameOver, {.8,.8,.8,1}, _ecran.w, "center")
-    tween.gameOver = newTween(departGameOver, 400, 3)
+    tween.gameOver = newTween(departGameOver, 400, 2)
     local xBtn = (_ecran.w - _img.btn:getWidth()) / 2
     local yBtn = 400
     btn.rejouer = newBtn("img", xBtn, yBtn, _img.btn, _img.btnHover, _img.btnPressed, "recommencer")
@@ -109,6 +109,8 @@ function jeu.update(dt)
 
     if not _fade.fadeIn and not _fade.fadeOut then
         if _etatActu == "jeu" then 
+
+            -- Direction du Titan
             local angleMouse
             local pi5 = math.pi / 5
             local posY = 265
@@ -126,8 +128,7 @@ function jeu.update(dt)
                     titan.direction = 4
                 else 
                     titan.direction = 5
-                end
-                            
+                end                            
             end 
 
             if titan.direction == 1 then
@@ -163,7 +164,7 @@ function jeu.update(dt)
             sprite.titan.img = img.titanDead[math.floor(titan.frame)]
 
             if alphaVoile < .7 then 
-                alphaVoile = alphaVoile + dt
+                alphaVoile = alphaVoile + dt / tween.gameOver.duree * .7
             end
 
             if tween.gameOver.finished then 
@@ -242,12 +243,10 @@ end
 
 
 function jeu.keypressed(key)
-    if key == "up" then 
-        if titan.pv < titan.pvMax then titan.pv = titan.pv + 10 end 
+    if key == "space" then 
     elseif key == "down" then 
-        if titan.pv > 0 then titan.pv = titan.pv - 100 end
+        titan.pv = titan.pv - 250
     end 
-
 end
 
 --[[
