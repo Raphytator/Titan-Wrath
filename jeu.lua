@@ -510,27 +510,12 @@ function jeu.updateShake(dt)
         shake.cy = y * shake.val
 
         if shake.val < .05 then 
-            shake.val = 0
+            shake.val = 0            
+            shake.cx = 0
+            shake.cy = 0
             shake.actif = false
         end 
     end 
 end 
-
---[[
-
-    shake = 1
-
-    if decoupe_fin then
-		shake=shake*0.75
-		local x,y=5-rnd(25),5-rnd(25)
-	 x*=shake
-	 y*=shake
-	 cx,cy=x,y
-	 if (shake<0.05) then  
-			shake,cx,cy,decoupe_fin=0,0,0,false
-			joueur_start()			
-	 end
-	end
-]]
 
 return jeu
