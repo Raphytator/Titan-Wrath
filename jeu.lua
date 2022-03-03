@@ -99,9 +99,14 @@ function jeu.init()
 
     sprite.titan = newSprite(img.titan[1][1][1], sprite.trouTerrain.x + img.titan[1][1][1]:getWidth() / 2, 40 + img.titan[1][1][1]:getHeight() / 2, 1, true)
 
-    titan.cooldown1Max = 2.5
-    titan.cooldown2Max = 5
-    titan.cooldown3Max = 10
+    titan.cooldown = {
+        [titan.etats.POING] = { actu = 0, max = 1.5, y = 0, h = 64},
+        [titan.etats.VAGUE] = { actu = 0, max = 5, y = 0, h = 64},
+        [titan.etats.QUAKE] = { actu = 0, max = 10, y = 0, h = 64},
+    }
+
+    
+
     titan.pvMax = 500
     
 
@@ -231,14 +236,20 @@ function jeu.update(dt)
                             titan.nbCoups = titan.nbCoups + 1 
                             titan.frame = 1
                             jeu.effetCompetence(titan.etat)
-                            if titan.nbCoups >= titan.nbCoupsMax then                                
+                            if titan.nbCoups >= titan.nbCoupsMax then   
+                                titan.cooldown[titan.etat].actu = titan.cooldown[titan.etat].max                
                                 titan.competenceActive = false                                
-                                titan.etat = titan.etats.STAND
+                                titan.etat = titan.etats.STAND                                
                             end
                         end                        
                     end 
                 end 
 
+                -- Cooldowns
+                jeu.updateCooldown(titan.etats.POING, dt)
+                jeu.updateCooldown(titan.etats.VAGUE, dt)
+                jeu.updateCooldown(titan.etats.QUAKE, dt)
+                
                 -- Vagues de soldats
 
                 -- Comportement soldats 
@@ -304,16 +315,22 @@ function jeu.draw()
     sprite.trouTerrain:draw()
     sprite.titan:draw()
 
-
+    -- Affichage de la santé
     sprite.receptacleSante:draw()
     spriteQuad.barreSante:draw()
 
+    -- Affichage des compétences
     for i=1, #sprite.competence do 
         local sp = sprite.competence[i]
         love.graphics.draw(img.boutonCompetence, sp.x, sp.y)
         sp:draw()
         txt.competences[i]:print()
     end
+
+    -- Affichage des cooldown
+    if titan.cooldown[titan.etats.POING].actu > 0 then drawRectangle("fill", sprite.competence[1].x, titan.cooldown[titan.etats.POING].y, 64, titan.cooldown[titan.etats.POING].h, {0,0,0,.6}) end 
+    if titan.cooldown[titan.etats.VAGUE].actu > 0 then drawRectangle("fill", sprite.competence[2].x, titan.cooldown[titan.etats.VAGUE].y, 64, titan.cooldown[titan.etats.VAGUE].h, {0,0,0,.6}) end 
+    if titan.cooldown[titan.etats.QUAKE].actu > 0 then drawRectangle("fill", sprite.competence[3].x, titan.cooldown[titan.etats.QUAKE].y, 64, titan.cooldown[titan.etats.QUAKE].h, {0,0,0,.6}) end 
 
     if vague.affichage then 
         txt.vague:print()
@@ -344,8 +361,9 @@ function jeu.keypressed(key)
     if key == "space" then 
 
         if not vague.affichage and not titan.competenceActive and _etatActu == "jeu" then
-            titan.competenceActive = true
-            jeu.activeCompetence(titan.etats.QUAKE)
+            if titan.cooldown[titan.etats.QUAKE].actu == 0 then 
+                jeu.activeCompetence(titan.etats.QUAKE)
+            end
         end
 
     elseif key == "down" then 
@@ -366,12 +384,16 @@ end
 function jeu.mousepressed(x, y, button, istouch, presses)
 
     if not vague.affichage and not titan.competenceActive and _etatActu == "jeu" then
-        titan.competenceActive = true
+        
         
         if button == 1 then 
-            jeu.activeCompetence(titan.etats.POING)
+            if titan.cooldown[titan.etats.POING].actu == 0 then 
+                jeu.activeCompetence(titan.etats.POING)
+            end
         elseif button == 2 then 
-            jeu.activeCompetence(titan.etats.VAGUE)
+            if titan.cooldown[titan.etats.VAGUE].actu == 0 then 
+                jeu.activeCompetence(titan.etats.VAGUE)
+            end
         end
     end
 
@@ -391,9 +413,9 @@ function jeu.nouveauJeu()
 
     titan.direction = 3
     titan.pv = titan.pvMax
-    titan.cooldown1 = 0
-    titan.cooldown2 = 0
-    titan.cooldown3 = 0
+    titan.cooldown[titan.etats.POING].actu = 0
+    titan.cooldown[titan.etats.VAGUE].actu = 0
+    titan.cooldown[titan.etats.QUAKE].actu = 0
     titan.flip = 1
     titan.etat = titan.etats.STAND
     titan.frame = 1
@@ -426,6 +448,7 @@ end
 
 function jeu.activeCompetence(pComp)
 
+    titan.competenceActive = true
     titan.etat = pComp
     titan.frame = 1
     titan.nbCoups = 0
@@ -437,20 +460,33 @@ function jeu.activeCompetence(pComp)
         titan.vitesseFrame = 5
     elseif pComp == titan.etats.QUAKE then
         titan.vitesseFrame = 5
-        titan.nbCoupsMax = 5
+        titan.nbCoupsMax = 4
         titan.direction = 1
     end
 
+    titan.cooldown[pComp].y = sprite.competence[pComp - 1].y + 64
+    titan.cooldown[pComp].h = -64
 end 
 
 function jeu.effetCompetence(pComp)
     if pComp == titan.etats.POING then
-        
+
     elseif pComp == titan.etats.VAGUE then
         
     elseif pComp == titan.etats.QUAKE then
         
     end
+end 
+
+function jeu.updateCooldown(pComp, dt)
+    if titan.cooldown[pComp].actu > 0 then 
+        titan.cooldown[pComp].actu = titan.cooldown[pComp].actu - dt
+        local pourcentage =  dt / titan.cooldown[pComp].max * 100
+        local v = 64 / 100 * pourcentage
+        titan.cooldown[pComp].h = titan.cooldown[pComp].h + v
+    elseif titan.cooldown[pComp].actu < 0 then 
+        titan.cooldown[pComp].actu = 0
+    end 
 end 
 
 return jeu
