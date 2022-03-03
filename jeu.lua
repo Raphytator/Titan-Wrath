@@ -9,6 +9,7 @@ local jeu = {}
 ╚═╝╚═╝  ╚═══╝╚═╝   ╚═╝   
                          
 ]]
+local stats = require("stats")
 
 local img = {}
 local sprite = {}
@@ -22,6 +23,7 @@ local mid = _ecran.w / 2
 local alphaVoile
 local departGameOver
 local vague = {}
+local soldats = {}
 
 local shake = { actif = false, cx = 0, cy = 0 }
 
@@ -110,11 +112,8 @@ function jeu.init()
         [titan.etats.VAGUE] = { actu = 0, max = 5, y = 0, h = 64},
         [titan.etats.QUAKE] = { actu = 0, max = 10, y = 0, h = 64},
     }
-
-    
-
-    titan.pvMax = 500
-    
+   
+    initSoldats()
 
     -- =========
     -- Game over
@@ -221,7 +220,7 @@ function jeu.update(dt)
             else 
 
                 -- Santé Titan
-                spriteQuad.barreSante:update((spriteQuad.barreSante.img:getWidth() / titan.pvMax) * titan.pv)
+                spriteQuad.barreSante:update((spriteQuad.barreSante.img:getWidth() / stats.pvMaxTitan) * titan.pv)
 
                 -- Gameover
                 if titan.pv <= 0 then 
@@ -261,8 +260,17 @@ function jeu.update(dt)
                 jeu.updateShake(dt)
 
                 -- Vagues de soldats
-
-                -- Comportement soldats 
+                if vague.spawnedSoldiers < stats.nbSoldats[vague.actu] then 
+                    vague.spawnSoldiersTimer = vague.spawnSoldiersTimer + dt 
+                    if vague.spawnSoldiersTimer >= vague.spawnSoldiersTimerMax then 
+                        jeu.spawnSoldiers()
+                    end 
+                end 
+ 
+                -- Soldats
+                for i=1, #soldats do 
+                    soldats[i]:update(dt)
+                end 
 
                 -- Vaches 
 
@@ -328,6 +336,11 @@ function jeu.draw()
     sprite.terrain:draw()
     sprite.trouTerrain:draw()
     sprite.titan:draw()
+
+    -- Soldats
+    for i=1, #soldats do 
+        soldats[i]:draw()
+    end 
 
     love.graphics.pop()
 
@@ -429,7 +442,7 @@ end
 function jeu.nouveauJeu()
 
     titan.direction = 3
-    titan.pv = titan.pvMax
+    titan.pv = stats.pvMaxTitan
     titan.cooldown[titan.etats.POING].actu = 0
     titan.cooldown[titan.etats.VAGUE].actu = 0
     titan.cooldown[titan.etats.QUAKE].actu = 0
@@ -440,7 +453,7 @@ function jeu.nouveauJeu()
     titan.timerFinCompetence = 0
     titan.competenceActive = false
     sprite.titan.img = img.titan[titan.etat][titan.direction][titan.frame]
-    spriteQuad.barreSante:update((spriteQuad.barreSante.img:getWidth() / titan.pvMax) * titan.pv) -- Santé Titan
+    spriteQuad.barreSante:update((spriteQuad.barreSante.img:getWidth() / stats.pvMaxTitan) * titan.pv) -- Santé Titan
 
     tween.gameOver:reset()
     txt.gameOver.y = departGameOver
@@ -449,6 +462,7 @@ function jeu.nouveauJeu()
     txt.spacebar.color = {0,0,0,1}
 
     vague.actu = 1
+    soldats = {}
 
     jeu.lancementVague()
 
@@ -465,7 +479,26 @@ function jeu.lancementVague()
     txt.vague.txtSup = " "..vague.actu
     txt.vague.color[4] = 0
 
+    vague.spawnSoldiersTimer = 0
+    vague.spawnSoldiersTimerMax = 0
+    vague.spawnedSoldiers = 0
+end 
+
+function jeu.spawnSoldiers()
+    vague.spawnSoldiersTimer = 0
+    vague.spawnSoldiersTimerMax = love.math.random(3, 6)
+    vague.spawnedSoldiers = vague.spawnedSoldiers + 1
+
+    local nb = love.math.random(0, 100)
+    local nbSpawn
+    if nb <= 55 then nbSpawn = 1
+    elseif nb <= 75 then nbSpawn = 2
+    else nbSpawn = 3 end 
     
+    for i=1, nbSpawn do 
+        local soldatsTMP = newSoldats()
+        table.insert(soldats, soldatsTMP)
+    end
 end 
 
 function jeu.activeCompetence(pComp)
@@ -536,5 +569,7 @@ function jeu.resetShake()
     shake.cy = 0
     shake.actif = false
 end
+
+
 
 return jeu

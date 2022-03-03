@@ -41,6 +41,8 @@ function initImg()
     _img.btn = love.graphics.newImage("img/bouton.png")
     _img.btnHover = love.graphics.newImage("img/boutonHover.png")
     _img.btnPressed = love.graphics.newImage("img/boutonPressed.png")
+
+    love.mouse.setCursor(love.mouse.newCursor(love.image.newImageData("img/cursor.png")))
 end 
 
 function initSfx()

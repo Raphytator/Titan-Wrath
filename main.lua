@@ -17,6 +17,7 @@ require("gui")
 require("fonctions")
 require("init")
 require("tweening")
+require("soldats")
 
 
 function love.load()
