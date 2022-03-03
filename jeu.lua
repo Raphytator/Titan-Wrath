@@ -220,8 +220,7 @@ function jeu.update(dt)
                 -- Gameover
                 if titan.pv <= 0 then 
                     changeEtat("gameOver")
-                    shake.cx = 0
-                    shake.cy = 0
+                    jeu.resetShake()
                     titan.etat = titan.etats.DEAD
                     titan.frame = 1
                     titan.direction = 1
@@ -501,7 +500,7 @@ function jeu.updateCooldown(pComp, dt)
     end 
 end 
 
-function jeu.updateShake(dt)
+function jeu.updateShake()
     if shake.actif then 
         shake.val = shake.val * .75
         local x = 5 - love.math.random(25)
@@ -509,13 +508,15 @@ function jeu.updateShake(dt)
         shake.cx = x * shake.val
         shake.cy = y * shake.val
 
-        if shake.val < .05 then 
-            shake.val = 0            
-            shake.cx = 0
-            shake.cy = 0
-            shake.actif = false
-        end 
+        if shake.val < .05 then jeu.resetShake() end 
     end 
 end 
+
+function jeu.resetShake()
+    shake.val = 0            
+    shake.cx = 0
+    shake.cy = 0
+    shake.actif = false
+end
 
 return jeu
