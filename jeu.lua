@@ -155,17 +155,19 @@ function jeu.update(dt)
 
                 angleMouse = math.abs(math.angle(mid, posY, _mouse.x, _mouse.y))
 
-                if angleMouse < pi5 then
-                    titan.direction = 1
-                elseif angleMouse >= pi5 and angleMouse < pi5 * 2 then
-                    titan.direction = 2
-                elseif angleMouse >= pi5 * 2 and angleMouse < pi5 * 3 then
-                    titan.direction = 3
-                elseif angleMouse >= pi5 * 3 and angleMouse < pi5 * 4 then
-                    titan.direction = 4
-                else 
-                    titan.direction = 5
-                end                            
+                if not titan.competenceActive then 
+                    if angleMouse < pi5 then
+                        titan.direction = 1
+                    elseif angleMouse >= pi5 and angleMouse < pi5 * 2 then
+                        titan.direction = 2
+                    elseif angleMouse >= pi5 * 2 and angleMouse < pi5 * 3 then
+                        titan.direction = 3
+                    elseif angleMouse >= pi5 * 3 and angleMouse < pi5 * 4 then
+                        titan.direction = 4
+                    else 
+                        titan.direction = 5
+                    end            
+                end                
             end 
 
             if titan.direction == 1 then
@@ -217,14 +219,23 @@ function jeu.update(dt)
                     titan.frame = 1
                     titan.direction = 1
                     titan.vitesseFrame = 3
-                end             
-
+                end         
+                
                 -- Compétences 
                 if titan.competenceActive then
-                    if titan.frame > #img.titan[titan.direction][titan.etat] then 
-                        titan.competenceActive = false 
-                        titan.frame = 1
-                        titan.etat = titan.etats.STAND
+                    if titan.frame > #img.titan[titan.etat][titan.direction] then 
+                        
+                        titan.timerFinCompetence = titan.timerFinCompetence + dt 
+                        if titan.timerFinCompetence > .2 then 
+                            titan.timerFinCompetence = 0
+                            titan.nbCoups = titan.nbCoups + 1 
+                            titan.frame = 1
+                            jeu.effetCompetence(titan.etat)
+                            if titan.nbCoups >= titan.nbCoupsMax then                                
+                                titan.competenceActive = false                                
+                                titan.etat = titan.etats.STAND
+                            end
+                        end                        
                     end 
                 end 
 
@@ -240,9 +251,7 @@ function jeu.update(dt)
         elseif _etatActu == "gameOver" then 
             tween.gameOver:update(dt)
             txt.gameOver.y = tween.gameOver.actu
-
-            
-
+           
             if alphaVoile < .7 then 
                 alphaVoile = alphaVoile + dt / tween.gameOver.duree * .7
             end
@@ -253,8 +262,11 @@ function jeu.update(dt)
             end
         end
 
-        if titan.frame < #img.titan[titan.etat][titan.direction] then titan.frame = titan.frame + dt * titan.vitesseFrame end
-        sprite.titan.img = img.titan[titan.etat][titan.direction][math.floor(titan.frame)]
+        if titan.frame <= #img.titan[titan.etat][titan.direction] then titan.frame = titan.frame + dt * titan.vitesseFrame end
+        if math.floor(titan.frame) <= #img.titan[titan.etat][titan.direction] then
+            sprite.titan.img = img.titan[titan.etat][titan.direction][math.floor(titan.frame)]
+        end
+
     end 
 
     if _fade.fadeEnd then 
@@ -386,6 +398,7 @@ function jeu.nouveauJeu()
     titan.etat = titan.etats.STAND
     titan.frame = 1
     titan.vitesseFrame = 1.5
+    titan.timerFinCompetence = 0
     titan.competenceActive = false
     sprite.titan.img = img.titan[titan.etat][titan.direction][titan.frame]
     spriteQuad.barreSante:update((spriteQuad.barreSante.img:getWidth() / titan.pvMax) * titan.pv) -- Santé Titan
@@ -415,7 +428,29 @@ function jeu.activeCompetence(pComp)
 
     titan.etat = pComp
     titan.frame = 1
+    titan.nbCoups = 0
+    titan.nbCoupsMax = 1
 
+    if pComp == titan.etats.POING then
+        titan.vitesseFrame = 7        
+    elseif pComp == titan.etats.VAGUE then
+        titan.vitesseFrame = 5
+    elseif pComp == titan.etats.QUAKE then
+        titan.vitesseFrame = 5
+        titan.nbCoupsMax = 5
+        titan.direction = 1
+    end
+
+end 
+
+function jeu.effetCompetence(pComp)
+    if pComp == titan.etats.POING then
+        
+    elseif pComp == titan.etats.VAGUE then
+        
+    elseif pComp == titan.etats.QUAKE then
+        
+    end
 end 
 
 return jeu
