@@ -51,8 +51,6 @@ lang.creditsTxt6 = "Raphytator (Programing, Gamedesign)"
 -- Jeu
 -- ===
 
-lang.clicGauche = "Left click"
-lang.clicDroit = "Right click"
 lang.barreEspace = "Spacebar"
 lang.gameOver = "Game Over"
 lang.recommencer = "Retry"

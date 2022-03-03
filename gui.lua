@@ -298,6 +298,7 @@ end
 function drawSprite(tab)
     love.graphics.setColor(1,1,1,tab.alpha)
     love.graphics.draw(tab.img, tab.x, tab.y, tab.r, tab.sx, tab.sy, tab.ox, tab.oy)
+    love.graphics.setColor(1,1,1,1)
 end 
 
 function newSprite(image, x, y, alpha, oxy)

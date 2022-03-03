@@ -38,10 +38,16 @@ function jeu.init()
     sprite.competence[2] = newSprite(love.graphics.newImage("img/Competence2.png"), 5, sprite.competence[1].y + 64 + 5)
     sprite.competence[3] = newSprite(love.graphics.newImage("img/Competence3.png"), 5, sprite.competence[2].y + 64 + 5)
 
-    txt.competences = {}
-    txt.competences[1] = newTxt("clicGauche", _fonts.texte, sprite.competence[1].x + 75, sprite.competence[1].y + 10)
-    txt.competences[2] = newTxt("clicDroit", _fonts.texte, sprite.competence[2].x + 75, sprite.competence[2].y + 10)
-    txt.competences[3] = newTxt("barreEspace", _fonts.texte, sprite.competence[3].x + 75, sprite.competence[3].y + 10)
+    img.mouseLeft = love.graphics.newImage("img/mouseLeft.png")
+    img.mouseRight = love.graphics.newImage("img/mouseRight.png")
+    img.spacebar = love.graphics.newImage("img/spacebar.png")
+
+    sprite.commandes = {}
+    sprite.commandes[1] = newSprite(img.mouseLeft, sprite.competence[1].x + 75 + (img.spacebar:getWidth() - img.mouseLeft:getWidth()) / 2, sprite.competence[1].y + (sprite.competence[1].img:getHeight() - img.mouseLeft:getHeight()) / 2)
+    sprite.commandes[2] = newSprite(img.mouseRight, sprite.competence[2].x + 75 + (img.spacebar:getWidth() - img.mouseRight:getWidth()) / 2, sprite.competence[2].y + (sprite.competence[2].img:getHeight() - img.mouseRight:getHeight()) / 2)
+    sprite.commandes[3] = newSprite(img.spacebar, sprite.competence[3].x + 75, sprite.competence[3].y + (sprite.competence[3].img:getHeight() - img.spacebar:getHeight()) / 2)
+    txt.spacebar = newTxt("barreEspace", _fonts.mini, sprite.commandes[3].x, sprite.commandes[3].y + (img.spacebar:getHeight() - _fonts.mini:getHeight("W")) / 2, {0,0,0,1}, sprite.commandes[3].img:getWidth(), "center")
+
 
     img.receptacleSante = love.graphics.newImage("img/receptacleSante.png")
     sprite.receptacleSante = newSprite(img.receptacleSante, (_ecran.w - img.receptacleSante:getWidth()) / 2, 15)
@@ -54,7 +60,7 @@ function jeu.init()
     -- =====
 
     titan.etats = {
-        STAND = 1,
+        STAND = 1,  
         POING = 2,
         VAGUE = 3,
         QUAKE = 4,
@@ -334,8 +340,9 @@ function jeu.draw()
         local sp = sprite.competence[i]
         love.graphics.draw(img.boutonCompetence, sp.x, sp.y)
         sp:draw()
-        txt.competences[i]:print()
+        sprite.commandes[i]:draw()
     end
+    txt.spacebar:print()
 
     -- Affichage des cooldown
     if titan.cooldown[titan.etats.POING].actu > 0 then drawRectangle("fill", sprite.competence[1].x, titan.cooldown[titan.etats.POING].y, 64, titan.cooldown[titan.etats.POING].h, {0,0,0,.6}) end 
@@ -438,6 +445,9 @@ function jeu.nouveauJeu()
     tween.gameOver:reset()
     txt.gameOver.y = departGameOver
 
+    for i=1, #sprite.commandes do sprite.commandes[i].alpha = 1 end 
+    txt.spacebar.color = {0,0,0,1}
+
     vague.actu = 1
 
     jeu.lancementVague()
@@ -454,6 +464,8 @@ function jeu.lancementVague()
     vague.timer = 0
     txt.vague.txtSup = " "..vague.actu
     txt.vague.color[4] = 0
+
+    
 end 
 
 function jeu.activeCompetence(pComp)
@@ -486,9 +498,10 @@ function jeu.effetCompetence(pComp)
         shake.val = 2
     elseif pComp == titan.etats.QUAKE then
         shake.val = 3
+        txt.spacebar.color = {0,0,0,.3}
     end
 
-    txt.competences[pComp - 1].color = { .6, .6, .6, .7}
+    sprite.commandes[pComp - 1].alpha = .3
 end 
 
 function jeu.updateCooldown(pComp, dt)
@@ -499,7 +512,9 @@ function jeu.updateCooldown(pComp, dt)
         titan.cooldown[pComp].h = titan.cooldown[pComp].h + v
     elseif titan.cooldown[pComp].actu < 0 then 
         titan.cooldown[pComp].actu = 0
-        txt.competences[pComp - 1].color = { 0, 0, 0, 1}
+        sprite.commandes[pComp - 1].alpha = 1
+
+        if pComp == titan.etats.QUAKE then txt.spacebar.color = {0,0,0,1} end
     end 
 end 
 
