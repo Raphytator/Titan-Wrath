@@ -14,7 +14,7 @@ function initSoldats()
 end
 
 function updateSoldats(pSoldat, dt)
-    local vitesseDeplSoldats = 10
+    local vitesseDeplSoldats = 15
     if math.floor(distance(pSoldat.position.x, pSoldat.position.y, pSoldat.arrivee.x, pSoldat.arrivee.y)) > 4 then 
         pSoldat.position = pSoldat.position + (dt / vitesseDeplSoldats) * pSoldat.parcours
     else 
@@ -29,7 +29,6 @@ function updateSoldats(pSoldat, dt)
             pSoldat.frame = pSoldat.frame + 1
             if pSoldat.frame > #img.soldat[pSoldat.direction] then 
                 pSoldat.frame = 1
-
                 _toucheTitan = true 
                 _degatsTitan = #pSoldat.soldats
             end 
@@ -108,8 +107,8 @@ function newSoldats()
         s.sx = -1
     end 
 
-    --local rayon = 800
-    local rayon = 300
+    local rayon = 800
+    --local rayon = 300
     local posYOrigine = 265
     s.x = rayon * math.cos(s.angle) + _ecran.w / 2
     s.y = rayon * math.sin(s.angle) + posYOrigine 

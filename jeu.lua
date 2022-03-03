@@ -220,12 +220,14 @@ function jeu.update(dt)
             else 
 
                 -- Santé Titan
-                spriteQuad.barreSante:update((spriteQuad.barreSante.img:getWidth() / stats.pvMaxTitan) * titan.pv)
 
                 if _toucheTitan then 
                     _toucheTitan = false
                     titan.pv = titan.pv - _degatsTitan
+                    if titan.pv < 0 then titan.pv = 0 end
                 end
+
+                spriteQuad.barreSante:update((spriteQuad.barreSante.img:getWidth() / stats.pvMaxTitan) * titan.pv)
 
                 -- Gameover
                 if titan.pv <= 0 then 
@@ -393,16 +395,12 @@ end
 ]]
 
 function jeu.keypressed(key)
-    if key == "space" then 
-
+    if key == "space" then
         if not vague.affichage and not titan.competenceActive and _etatActu == "jeu" then
             if titan.cooldown[titan.etats.QUAKE].actu == 0 then 
                 jeu.activeCompetence(titan.etats.QUAKE)
             end
         end
-
-    elseif key == "down" then 
-        titan.pv = titan.pv - 250
     end 
 end
 
