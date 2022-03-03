@@ -23,10 +23,10 @@ local alphaVoile
 local departGameOver
 local vague = {}
 
-
+local shake = { actif = false, cx = 0, cy = 0 }
 
 function jeu.init()
-    sprite.terrain = newSprite(love.graphics.newImage("img/terrain.png"), 0, 0)
+    sprite.terrain = newSprite(love.graphics.newImage("img/terrain.png"), -100, -100)
     img.trouTerrain = love.graphics.newImage("img/trouTerrain.png")
     sprite.trouTerrain = newSprite(img.trouTerrain, (_ecran.w - img.trouTerrain:getWidth()) / 2, 235)
 
@@ -220,6 +220,8 @@ function jeu.update(dt)
                 -- Gameover
                 if titan.pv <= 0 then 
                     changeEtat("gameOver")
+                    shake.cx = 0
+                    shake.cy = 0
                     titan.etat = titan.etats.DEAD
                     titan.frame = 1
                     titan.direction = 1
@@ -250,6 +252,9 @@ function jeu.update(dt)
                 jeu.updateCooldown(titan.etats.VAGUE, dt)
                 jeu.updateCooldown(titan.etats.QUAKE, dt)
                 
+                -- Shakes
+                jeu.updateShake(dt)
+
                 -- Vagues de soldats
 
                 -- Comportement soldats 
@@ -309,11 +314,17 @@ end
 
 function jeu.draw()
 
+    
     drawRectangle("fill", 0, 0, _ecran.w, _ecran.h, {.1, .5, .8, 1})
+
+    love.graphics.push()
+    love.graphics.translate(shake.cx, shake.cy)
 
     sprite.terrain:draw()
     sprite.trouTerrain:draw()
     sprite.titan:draw()
+
+    love.graphics.pop()
 
     -- Affichage de la santé
     sprite.receptacleSante:draw()
@@ -469,12 +480,13 @@ function jeu.activeCompetence(pComp)
 end 
 
 function jeu.effetCompetence(pComp)
-    if pComp == titan.etats.POING then
-
+    shake.actif = true
+    if pComp == titan.etats.POING then        
+        shake.val = 1
     elseif pComp == titan.etats.VAGUE then
-        
+        shake.val = 2
     elseif pComp == titan.etats.QUAKE then
-        
+        shake.val = 3
     end
 end 
 
@@ -488,5 +500,37 @@ function jeu.updateCooldown(pComp, dt)
         titan.cooldown[pComp].actu = 0
     end 
 end 
+
+function jeu.updateShake(dt)
+    if shake.actif then 
+        shake.val = shake.val * .75
+        local x = 5 - love.math.random(25)
+        local y = 5 - love.math.random(25)
+        shake.cx = x * shake.val
+        shake.cy = y * shake.val
+
+        if shake.val < .05 then 
+            shake.val = 0
+            shake.actif = false
+        end 
+    end 
+end 
+
+--[[
+
+    shake = 1
+
+    if decoupe_fin then
+		shake=shake*0.75
+		local x,y=5-rnd(25),5-rnd(25)
+	 x*=shake
+	 y*=shake
+	 cx,cy=x,y
+	 if (shake<0.05) then  
+			shake,cx,cy,decoupe_fin=0,0,0,false
+			joueur_start()			
+	 end
+	end
+]]
 
 return jeu
