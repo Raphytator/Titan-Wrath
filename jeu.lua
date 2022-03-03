@@ -222,6 +222,11 @@ function jeu.update(dt)
                 -- Santé Titan
                 spriteQuad.barreSante:update((spriteQuad.barreSante.img:getWidth() / stats.pvMaxTitan) * titan.pv)
 
+                if _toucheTitan then 
+                    _toucheTitan = false
+                    titan.pv = titan.pv - _degatsTitan
+                end
+
                 -- Gameover
                 if titan.pv <= 0 then 
                     changeEtat("gameOver")

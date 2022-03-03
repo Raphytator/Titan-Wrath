@@ -14,20 +14,29 @@ function initSoldats()
 end
 
 function updateSoldats(pSoldat, dt)
-
+    local vitesseDeplSoldats = 10
     if math.floor(distance(pSoldat.position.x, pSoldat.position.y, pSoldat.arrivee.x, pSoldat.arrivee.y)) > 4 then 
-        pSoldat.position = pSoldat.position + (dt / 15) * pSoldat.parcours
-        --pSoldat.position = pSoldat.position + (dt ) * pSoldat.parcours
+        pSoldat.position = pSoldat.position + (dt / vitesseDeplSoldats) * pSoldat.parcours
     else 
         pSoldat.position.x = pSoldat.arrivee.x 
         pSoldat.position.y = pSoldat.arrivee.y 
         
         -- Attaque le joueur
+        pSoldat.timerFrame = pSoldat.timerFrame + dt 
+        local vitesseAttaqueSoldats = .5
+        if pSoldat.timerFrame >= vitesseAttaqueSoldats then 
+            pSoldat.timerFrame = 0
+            pSoldat.frame = pSoldat.frame + 1
+            if pSoldat.frame > #img.soldat[pSoldat.direction] then 
+                pSoldat.frame = 1
 
+                _toucheTitan = true 
+                _degatsTitan = #pSoldat.soldats
+            end 
+        end 
     end
 
     pSoldat:updatePositionSoldats()
-
 end 
 
 function drawSoldats(pSoldat)
@@ -89,6 +98,7 @@ function newSoldats()
     s.frame = 1
     s.direction = love.math.random(1, 5)
     s.angle = math.pi / 5 * s.direction - math.pi / 10
+    s.timerFrame = 0
 
     s.r = 0
     s.sx = 1
@@ -103,7 +113,6 @@ function newSoldats()
     local posYOrigine = 265
     s.x = rayon * math.cos(s.angle) + _ecran.w / 2
     s.y = rayon * math.sin(s.angle) + posYOrigine 
-
         
     local distanceArrivee = 80
     local arriveeX = distanceArrivee * math.cos(s.angle) + _ecran.w / 2
@@ -114,11 +123,8 @@ function newSoldats()
     s.parcours = s.arrivee - s.depart
     s.position = s.depart
 
-
     s.soldats = {}
     for i=1, 12 do  s.soldats[i] = { x = 0, y = 0, ox = img.soldat[s.direction][s.frame]:getWidth() / 2, oy = img.soldat[s.direction][s.frame]:getHeight() / 2} end
-
-
 
     updateSoldatsPosition(s)
 
