@@ -26,7 +26,7 @@ local vague = {}
 local shake = { actif = false, cx = 0, cy = 0 }
 
 function jeu.init()
-    sprite.terrain = newSprite(love.graphics.newImage("img/terrain.png"), -100, -100)
+    sprite.terrain = newSprite(love.graphics.newImage("img/terrain.png"), -100, -50)
     img.trouTerrain = love.graphics.newImage("img/trouTerrain.png")
     sprite.trouTerrain = newSprite(img.trouTerrain, (_ecran.w - img.trouTerrain:getWidth()) / 2, 235)
 
@@ -44,7 +44,7 @@ function jeu.init()
     txt.competences[3] = newTxt("barreEspace", _fonts.texte, sprite.competence[3].x + 75, sprite.competence[3].y + 10)
 
     img.receptacleSante = love.graphics.newImage("img/receptacleSante.png")
-    sprite.receptacleSante = newSprite(img.receptacleSante, (_ecran.w - img.receptacleSante:getWidth()) / 2, 25)
+    sprite.receptacleSante = newSprite(img.receptacleSante, (_ecran.w - img.receptacleSante:getWidth()) / 2, 15)
     spriteQuad.barreSante = newQuadSprite(love.graphics.newImage("img/barreSante.png"), sprite.receptacleSante.x, sprite.receptacleSante.y)
 
     txt.vague = newTxt("vague", _fonts.gameOver, 0, 300, {.1, .1, .1, 0}, _ecran.w, "center")
@@ -487,6 +487,8 @@ function jeu.effetCompetence(pComp)
     elseif pComp == titan.etats.QUAKE then
         shake.val = 3
     end
+
+    txt.competences[pComp - 1].color = { .6, .6, .6, .7}
 end 
 
 function jeu.updateCooldown(pComp, dt)
@@ -497,6 +499,7 @@ function jeu.updateCooldown(pComp, dt)
         titan.cooldown[pComp].h = titan.cooldown[pComp].h + v
     elseif titan.cooldown[pComp].actu < 0 then 
         titan.cooldown[pComp].actu = 0
+        txt.competences[pComp - 1].color = { 0, 0, 0, 1}
     end 
 end 
 
