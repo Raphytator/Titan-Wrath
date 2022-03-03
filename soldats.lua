@@ -35,10 +35,7 @@ function drawSoldats(pSoldat)
     for i=1, #pSoldat.soldats do 
         local s = pSoldat.soldats[i]
         love.graphics.draw(img.soldat[pSoldat.direction][pSoldat.frame], s.x, s.y, s.r, pSoldat.sx, pSoldat.sy, s.ox, s.oy)
-
-        drawRectangle("fill", pSoldat.arrivee.x, pSoldat.arrivee.y, 20, 20, {1,0,0,1})
-    end 
-
+    end
 end 
 
 
@@ -46,20 +43,44 @@ function updateSoldatsPosition(pSoldats)
     pSoldats.x = pSoldats.position.x
     pSoldats.y = pSoldats.position.y
 
-    pSoldats.soldats[1] = { x = pSoldats.x - img.soldat[pSoldats.direction][pSoldats.frame]:getWidth(), y = pSoldats.y - 25}
-    pSoldats.soldats[2] = { x = pSoldats.x - img.soldat[pSoldats.direction][pSoldats.frame]:getWidth() / 2, y = pSoldats.y - 25}
-    pSoldats.soldats[3] = { x = pSoldats.x, y = pSoldats.y - 25}
-    pSoldats.soldats[4] = { x = pSoldats.x + img.soldat[pSoldats.direction][pSoldats.frame]:getWidth() / 2, y = pSoldats.y - 25}
+    local w = img.soldat[pSoldats.direction][pSoldats.frame]:getWidth() 
+    local h = img.soldat[pSoldats.direction][pSoldats.frame]:getHeight() 
 
-    pSoldats.soldats[5] = { x = pSoldats.x - img.soldat[pSoldats.direction][pSoldats.frame]:getWidth(), y = pSoldats.y}
-    pSoldats.soldats[6] = { x = pSoldats.x - img.soldat[pSoldats.direction][pSoldats.frame]:getWidth() / 2, y = pSoldats.y}
-    pSoldats.soldats[7] = { x = pSoldats.x, y = pSoldats.y}
-    pSoldats.soldats[8] = { x = pSoldats.x + img.soldat[pSoldats.direction][pSoldats.frame]:getWidth() / 2, y = pSoldats.y }
+    local colonne1 = pSoldats.x - (w / 2) * 2
+    local colonne2 = pSoldats.x - (w / 3)
+    local colonne3 = pSoldats.x + (w / 3)
+    local colonne4 = pSoldats.x + (w / 2) * 2
 
-    pSoldats.soldats[9] = { x = pSoldats.x - img.soldat[pSoldats.direction][pSoldats.frame]:getWidth() , y = pSoldats.y + 25}
-    pSoldats.soldats[10] = { x = pSoldats.x - img.soldat[pSoldats.direction][pSoldats.frame]:getWidth() / 2, y = pSoldats.y + 25}
-    pSoldats.soldats[11] = { x = pSoldats.x, y = pSoldats.y + 25}
-    pSoldats.soldats[12] = { x = pSoldats.x + img.soldat[pSoldats.direction][pSoldats.frame]:getWidth() / 2, y = pSoldats.y + 25}
+    local ligne1 = pSoldats.y - 25
+    local ligne2 = pSoldats.y 
+    local ligne3 = pSoldats.y + 25
+
+    pSoldats.soldats[1].x = colonne1
+    pSoldats.soldats[1].y = ligne1
+    pSoldats.soldats[2].x = colonne2
+    pSoldats.soldats[2].y = ligne1
+    pSoldats.soldats[3].x = colonne3
+    pSoldats.soldats[3].y = ligne1
+    pSoldats.soldats[4].x = colonne4
+    pSoldats.soldats[4].y = ligne1
+
+    pSoldats.soldats[5].x = colonne1
+    pSoldats.soldats[5].y = ligne2
+    pSoldats.soldats[6].x = colonne2
+    pSoldats.soldats[6].y = ligne2
+    pSoldats.soldats[7].x = colonne3
+    pSoldats.soldats[7].y = ligne2
+    pSoldats.soldats[8].x = colonne4
+    pSoldats.soldats[8].y = ligne2
+
+    pSoldats.soldats[9].x = colonne1
+    pSoldats.soldats[9].y = ligne3
+    pSoldats.soldats[10].x = colonne2
+    pSoldats.soldats[10].y = ligne3
+    pSoldats.soldats[11].x = colonne3
+    pSoldats.soldats[11].y = ligne3
+    pSoldats.soldats[12].x = colonne4
+    pSoldats.soldats[12].y = ligne3
 end 
 
 function newSoldats()
@@ -67,7 +88,6 @@ function newSoldats()
 
     s.frame = 1
     s.direction = love.math.random(1, 5)
-    --s.direction = 5
     s.angle = math.pi / 5 * s.direction - math.pi / 10
 
     s.r = 0
@@ -76,11 +96,8 @@ function newSoldats()
 
     if inArray({1, 2}, s.direction) then
         s.sx = -1
-     end 
+    end 
 
-    s.ox = img.soldat[s.direction][s.frame]:getWidth() / 2
-    s.oy = img.soldat[s.direction][s.frame]:getHeight() / 2
-    
     --local rayon = 800
     local rayon = 300
     local posYOrigine = 265
@@ -99,7 +116,9 @@ function newSoldats()
 
 
     s.soldats = {}
-    for i=1, 12 do  s.soldats[i] = { x = 0, y = 0 } end
+    for i=1, 12 do  s.soldats[i] = { x = 0, y = 0, ox = img.soldat[s.direction][s.frame]:getWidth() / 2, oy = img.soldat[s.direction][s.frame]:getHeight() / 2} end
+
+
 
     updateSoldatsPosition(s)
 
