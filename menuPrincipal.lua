@@ -99,7 +99,7 @@ function menuPrincipal.init()
     -- Crédits
     -- =======
 
-    l = 6
+    l = 7
     c = 18
     xCadre = centrageCadre("x", c)
     yCadre = centrageCadre("y", l)
@@ -110,6 +110,7 @@ function menuPrincipal.init()
     txt.creditsTxt[3] = newTxt("creditsTxt3", _fonts.texte, xCadre + 25, txt.creditsTxt[2].y + 50, {0,0,0,1}, cadre.credits.w - 50, "left")
     txt.creditsTxt[4] = newTxt("creditsTxt4", _fonts.texte, xCadre + 25, txt.creditsTxt[3].y + 50, {0,0,0,1}, cadre.credits.w - 50, "left")
     txt.creditsTxt[5] = newTxt("creditsTxt5", _fonts.texte, xCadre + 25, txt.creditsTxt[4].y + 50, {0,0,0,1}, cadre.credits.w - 50, "left")
+    txt.creditsTxt[6] = newTxt("creditsTxt6", _fonts.texte, xCadre + 25, txt.creditsTxt[5].y + 50, {0,0,0,1}, cadre.credits.w - 50, "left")
 
 end 
 
