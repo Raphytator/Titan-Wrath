@@ -15,7 +15,7 @@ end
 
 function updateSoldats(pSoldat, dt)
     local vitesseDeplSoldats = 15
-    if pSoldat.live then 
+    if pSoldat.live and not pSoldat.fall then 
         if math.floor(distance(pSoldat.position.x, pSoldat.position.y, pSoldat.arrivee.x, pSoldat.arrivee.y)) > 4 then 
             pSoldat.position = pSoldat.position + (dt / vitesseDeplSoldats) * pSoldat.parcours
         else 
@@ -38,13 +38,22 @@ function updateSoldats(pSoldat, dt)
 
         pSoldat:updatePositionSoldats()
     end
+
+    if pSoldat.fall then 
+        pSoldat.timerFall = pSoldat.timerFall + dt 
+        if pSoldat.timerFall > .8 then 
+            pSoldat.timerFall = 0
+            pSoldat.r = 0
+            pSoldat.fall = false 
+        end
+    end 
 end 
 
 function drawSoldats(pSoldat)
 
     for i=1, #pSoldat.soldats do 
         local s = pSoldat.soldats[i]
-        if s.live then love.graphics.draw(img.soldat[pSoldat.direction][pSoldat.frame], s.x, s.y, s.r, pSoldat.sx, pSoldat.sy, s.ox, s.oy) end
+        if s.live then love.graphics.draw(img.soldat[pSoldat.direction][pSoldat.frame], s.x, s.y, pSoldat.r, pSoldat.sx, pSoldat.sy, s.ox, s.oy) end
     end
 end 
 
@@ -104,7 +113,7 @@ function recoitDegatsSoldats(pSoldats, pDegats, pFall)
             pSoldats.soldats[id].live = false
             
             -- Particules
-
+            
         end
     end 
 
@@ -114,6 +123,7 @@ function recoitDegatsSoldats(pSoldats, pDegats, pFall)
         if pFall then 
             pSoldats.fall = true
             pSoldats.timerFall = 0
+            pSoldats.r = math.pi / 2
         end
     end
 end 
