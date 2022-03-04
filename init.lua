@@ -3,6 +3,7 @@ function init()
     initVariables()
     initRoot()
     initImg()
+    initMusic()
     initSfx()
     initCadre()
     initFonts()
@@ -49,6 +50,13 @@ function initImg()
     love.mouse.setCursor(love.mouse.newCursor(love.image.newImageData("img/cursor.png")))
 end 
 
+function initMusic()
+    _music = {}
+    _music.wave = love.audio.newSource("music/wave.ogg", "stream")
+    _music.finalWave = love.audio.newSource("music/last.ogg", "stream")
+    _music.gameOver = love.audio.newSource("music/gameover.ogg", "stream")
+end 
+
 function initSfx()
     _sfx = {}
     _sfx.clic = love.audio.newSource("sfx/clic.wav", "static")
@@ -57,8 +65,6 @@ function initSfx()
     _sfx.heal = love.audio.newSource("sfx/heal.wav", "static")
     _sfx.splash = love.audio.newSource("sfx/splash.wav", "static")
     _sfx.pause = love.audio.newSource("sfx/pause.wav", "static")
-    _sfx.wave = love.audio.newSource("sfx/wave.ogg", "static")
-    _sfx.finalWave = love.audio.newSource("sfx/last.ogg", "static")
 end 
 
 function initFonts()

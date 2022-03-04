@@ -352,6 +352,7 @@ function jeu.update(dt)
                 -- Gameover
                 if titan.pv <= 0 then 
                     changeEtat("gameOver")
+                    playMusic(_music.gameOver)
                     jeu.resetShake()
                     titan.etat = titan.etats.DEAD
                     titan.frame = 1
@@ -359,13 +360,11 @@ function jeu.update(dt)
                     titan.vitesseFrame = 3
                 end         
                 
-
                 -- Cooldowns
                 jeu.updateCooldown(titan.etats.POING, dt)
                 jeu.updateCooldown(titan.etats.VAGUE, dt)
                 jeu.updateCooldown(titan.etats.QUAKE, dt)
-                                
-
+            
                 -- Vagues de soldats
                 if _etatActu == "jeu" then 
                     if vague.spawnedSoldiers < stats.nbSoldats[vague.actu] then 
@@ -727,11 +726,11 @@ function jeu.lancementVague()
     vague.timer = 0
     if vague.actu < stats.nbVagues then
         txt.vague.txtSup = " "..vague.actu
-        playSound(_sfx.wave)
+        playMusic(_music.wave)
     else 
         txt.vague.txtSup = ""
         txt.vague.txt = "vagueFinale"
-        playSound(_sfx.finalWave)        
+        playMusic(_music.finalWave)        
     end 
     txt.vague.color[4] = 0
 
