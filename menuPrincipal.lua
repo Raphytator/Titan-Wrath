@@ -124,8 +124,7 @@ end
                                  
 ]]
 
-function menuPrincipal.load()
-    _musiqueActu = nil
+function menuPrincipal.load()    
     changeEtat("choixLangue")
 end 
 
@@ -184,6 +183,7 @@ function menuPrincipal.update(dt)
         _fade.alphaTransition = 0
 
         if _fade.sortie == "menuPrincipal" then 
+            _musiqueActu = _music.menu
             changeEtat("menuPrincipal") 
         elseif _fade.sortie == "jouer" then
             changeScene(_scenes.jeu)

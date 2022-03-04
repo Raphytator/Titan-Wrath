@@ -523,6 +523,7 @@ function jeu.update(dt)
         elseif _fade.sortie == "menuPrincipal" then
             changeScene(_scenes.menuPrincipal)
             changeEtat("menuPrincipal")
+            _musiqueActu = _music.menu
         elseif _fade.sortie == "victory" then
             
         end 
