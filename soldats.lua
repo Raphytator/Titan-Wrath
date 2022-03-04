@@ -29,10 +29,13 @@ function updateSoldats(pSoldat, dt)
             if pSoldat.timerFrame >= vitesseAttaqueSoldats then 
                 pSoldat.timerFrame = 0
                 pSoldat.frame = pSoldat.frame + 1
-                if pSoldat.frame > #img.soldat[pSoldat.direction] then 
-                    pSoldat.frame = 1
+                if pSoldat.frame == #img.soldat[pSoldat.direction] then 
                     _toucheTitan = true 
                     _degatsTitan = #pSoldat.soldats
+                    playSound(_sfx.lance)
+                end
+                if pSoldat.frame > #img.soldat[pSoldat.direction] then 
+                    pSoldat.frame = 1                    
                 end 
             end 
         end

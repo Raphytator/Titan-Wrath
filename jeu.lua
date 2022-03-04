@@ -355,6 +355,8 @@ function jeu.update(dt)
                 -- Gameover
                 if titan.pv <= 0 then 
                     changeEtat("gameOver")
+                    _musiqueActu:stop()
+                    _musiqueActu = nil
                     playMusic(_music.gameOver)
                     jeu.resetShake()
                     titan.etat = titan.etats.DEAD
@@ -436,7 +438,7 @@ function jeu.update(dt)
                         victoire.alpha = victoire.alpha - dt / vitesse
                         txt.victoire.color = {1,1,1,victoire.alpha}
                     else 
-                        fadeOut("menuPrincipal")
+                        fadeOut("victory")
                     end 
                 end 
             end

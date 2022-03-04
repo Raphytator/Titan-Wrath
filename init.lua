@@ -67,6 +67,7 @@ function initSfx()
     _sfx.heal = love.audio.newSource("sfx/heal.wav", "static")
     _sfx.splash = love.audio.newSource("sfx/splash.wav", "static")
     _sfx.pause = love.audio.newSource("sfx/pause.wav", "static")
+    _sfx.lance = love.audio.newSource("sfx/lance.wav", "static")
 end 
 
 function initFonts()
