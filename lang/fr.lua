@@ -56,6 +56,7 @@ lang.gameOver = "Vous avez perdu !"
 lang.recommencer = "Recommencer"
 lang.menuPrincipal = "Menu principal"
 lang.vague = "Vague"
+lang.vagueFinale = "Vague finale"
 lang.victoire = "Victoire !"
 
 return lang

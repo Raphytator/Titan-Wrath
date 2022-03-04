@@ -196,9 +196,9 @@ function jeu.init()
     
 
     titan.cooldown = {
-        [titan.etats.POING] = { actu = 0, max = .8, y = 0, h = 64},
-        [titan.etats.VAGUE] = { actu = 0, max = 5, y = 0, h = 64},
-        [titan.etats.QUAKE] = { actu = 0, max = 10, y = 0, h = 64},
+        [titan.etats.POING] = { actu = 0, max = stats.cooldown[1], y = 0, h = 64},
+        [titan.etats.VAGUE] = { actu = 0, max = stats.cooldown[2], y = 0, h = 64},
+        [titan.etats.QUAKE] = { actu = 0, max = stats.cooldown[3], y = 0, h = 64},
     }
    
     initSoldats()
@@ -402,7 +402,7 @@ function jeu.update(dt)
                         victoire.timer = 0
                     end 
                 elseif victoire.etat == "standby" then
-                    if victoire.timer < 2.5 then 
+                    if victoire.timer < 1.8 then 
                         victoire.timer = victoire.timer + dt
                     else 
                         victoire.voileFinal = 0
@@ -673,7 +673,11 @@ function jeu.lancementVague()
     vague.etat = "apparition"
     vague.alpha = 0
     vague.timer = 0
-    txt.vague.txtSup = " "..vague.actu
+    if vague.actu < stats.nbVagues then txt.vague.txtSup = " "..vague.actu
+    else 
+        txt.vague.txtSup = ""
+        txt.vague.txt = getText("vagueFinale")
+    end 
     txt.vague.color[4] = 0
 
     vague.spawnSoldiersTimer = 0
@@ -724,21 +728,19 @@ function jeu.effetCompetence(pComp)
     local titanX = _ecran.w / 2
     local titanY = origineTitanY
     local tabDirection = { titan.direction }
-    local zones = {} -- Dégats en fonction des zones
+    local zones = stats.degatsZones[pComp - 1] -- Dégats en fonction des zones
     local fall = false
 
     playSound(_sfx.poing)
 
     shake.actif = true
     if pComp == titan.etats.POING then        
-        shake.val = 1
-        zones = {5, 3, 1, 0}
+        shake.val = 1        
     elseif pComp == titan.etats.VAGUE then
         shake.val = 2
         shockwave.launch(false, titan.direction)        
         shaderActif = true
         timerShader = 0
-        zones = {6, 4, 2, 1}
         fall = true
     elseif pComp == titan.etats.QUAKE then
         shake.val = 3
@@ -747,7 +749,6 @@ function jeu.effetCompetence(pComp)
         shockwave.launch(true)
         shaderActif = true
         timerShader = 0
-        zones = {4, 3, 2, 1}
         fall = true
     end
 
@@ -782,7 +783,7 @@ function jeu.vagueSuivante()
     jeu.resetShake()    
 
     vague.actu = vague.actu + 1
-    if vague.actu < stats.nbVagues then 
+    if vague.actu <= stats.nbVagues then 
         jeu.lancementVague()
     else 
         -- VICTOIRE

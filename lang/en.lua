@@ -56,6 +56,7 @@ lang.gameOver = "Game Over"
 lang.recommencer = "Retry"
 lang.menuPrincipal = "Main menu"
 lang.vague = "Wave"
+lang.vagueFinale = "Final wave"
 lang.victoire = "Victory !"
 
 
