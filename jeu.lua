@@ -10,6 +10,7 @@ local jeu = {}
                          
 ]]
 local stats = require("stats")
+local shockwave = require("shockwave")
 
 local img = {}
 local sprite = {}
@@ -28,6 +29,7 @@ local soldats = {}
 local shake = { actif = false, cx = 0, cy = 0 }
 
 function jeu.init()
+    shockwave.init()
     sprite.terrain = newSprite(love.graphics.newImage("img/terrain.png"), -100, -50)
     img.trouTerrain = love.graphics.newImage("img/trouTerrain.png")
     sprite.trouTerrain = newSprite(img.trouTerrain, (_ecran.w - img.trouTerrain:getWidth()) / 2, 235)
@@ -156,6 +158,8 @@ function jeu.update(dt)
 
     if not _fade.fadeIn and not _fade.fadeOut then
         if _etatActu == "jeu" then 
+            
+            shockwave.update(dt)
 
             -- Direction du Titan
             local angleMouse
@@ -220,7 +224,6 @@ function jeu.update(dt)
             else 
 
                 -- Santé Titan
-
                 if _toucheTitan then 
                     _toucheTitan = false
                     titan.pv = titan.pv - _degatsTitan
@@ -252,7 +255,7 @@ function jeu.update(dt)
                             if titan.nbCoups >= titan.nbCoupsMax then   
                                 titan.cooldown[titan.etat].actu = titan.cooldown[titan.etat].max                
                                 titan.competenceActive = false                                
-                                titan.etat = titan.etats.STAND                                
+                                titan.etat = titan.etats.STAND                              
                             end
                         end                        
                     end 
@@ -337,10 +340,12 @@ function jeu.draw()
     
     drawRectangle("fill", 0, 0, _ecran.w, _ecran.h, {.1, .5, .8, 1})
 
+    shockwave.draw()
     love.graphics.push()
     love.graphics.translate(shake.cx, shake.cy)
 
     sprite.terrain:draw()
+    love.graphics.setShader()
     sprite.trouTerrain:draw()
     sprite.titan:draw()
 
@@ -382,6 +387,7 @@ function jeu.draw()
             btn.menuPrincipal:draw()
         end
     end 
+
 end 
 
 --[[
@@ -513,13 +519,13 @@ function jeu.activeCompetence(pComp)
     titan.nbCoupsMax = 1
 
     if pComp == titan.etats.POING then
-        titan.vitesseFrame = 7        
+        titan.vitesseFrame = 7   
     elseif pComp == titan.etats.VAGUE then
-        titan.vitesseFrame = 5
+        titan.vitesseFrame = 5  
     elseif pComp == titan.etats.QUAKE then
         titan.vitesseFrame = 5
         titan.nbCoupsMax = 4
-        titan.direction = 1
+        titan.direction = 1        
     end
 
     titan.cooldown[pComp].y = sprite.competence[pComp - 1].y + 64
@@ -527,17 +533,34 @@ function jeu.activeCompetence(pComp)
 end 
 
 function jeu.effetCompetence(pComp)
+    local titanX = _ecran.w / 2
+    local titanY = 265
+    local tabDirection = { titan.direction }
+
     shake.actif = true
     if pComp == titan.etats.POING then        
         shake.val = 1
     elseif pComp == titan.etats.VAGUE then
         shake.val = 2
+        shockwave.launch(false, titan.direction)        
     elseif pComp == titan.etats.QUAKE then
         shake.val = 3
         txt.spacebar.color = {0,0,0,.3}
+        tabDirection = {1,2,3,4,5}
+        shockwave.launch(true)
     end
 
     sprite.commandes[pComp - 1].alpha = .3
+
+    -- Dégats aux soldats
+    for i=#soldats, 1, -1 do 
+        local s = soldats[i]
+        if inArray(tabDirection, s.direction) then 
+            local distanceSoldats = distance(titanX, titanY, s.position.x, s.position.y)
+            
+            --if distanceSoldats > 
+        end 
+    end 
 end 
 
 function jeu.updateCooldown(pComp, dt)
@@ -572,7 +595,5 @@ function jeu.resetShake()
     shake.cy = 0
     shake.actif = false
 end
-
-
 
 return jeu
