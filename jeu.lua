@@ -265,6 +265,9 @@ end
 function jeu.update(dt)
 
     if not _fade.fadeIn and not _fade.fadeOut and _etatActu ~= "pause" then
+        
+        
+
         if inArray({"victoire", "jeu"}, _etatActu) then 
             
             if shaderActif then 
@@ -433,7 +436,7 @@ function jeu.update(dt)
                         victoire.alpha = victoire.alpha - dt / vitesse
                         txt.victoire.color = {1,1,1,victoire.alpha}
                     else 
-                        fadeOut("victory")
+                        fadeOut("menuPrincipal")
                     end 
                 end 
             end
@@ -505,7 +508,7 @@ function jeu.update(dt)
     end 
 
     if _etatActu == "pause" then 
-        btn.reprendre:update(changeEtat, {"jeu"})
+        btn.reprendre:update(jeu.resumeJeu)
         btn.menuPrincipal:update(fadeOut, {"menuPrincipal"})
     end 
 
@@ -645,10 +648,13 @@ function jeu.keypressed(key)
             end
         elseif key == "escape" then 
             playSound(_sfx.pause)
+            _musiqueActu:setVolume(.3)
             changeEtat("pause")
         end 
     end
 end
+
+
 
 --[[
 ███╗   ███╗ ██████╗ ██╗   ██╗███████╗███████╗██████╗ ██████╗ ███████╗███████╗███████╗███████╗██████╗ 
@@ -686,7 +692,14 @@ end
                                                                           
 ]]
 
+function jeu.resumeJeu()
+    _musiqueActu:setVolume(1)
+    changeEtat("jeu")
+end 
+
 function jeu.nouveauJeu()
+    _musiqueActu = _music.jeu
+
 
     titan.direction = 3
     titan.pv = stats.pvMaxTitan

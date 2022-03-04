@@ -125,6 +125,7 @@ end
 ]]
 
 function menuPrincipal.load()
+    _musiqueActu = nil
     changeEtat("choixLangue")
 end 
 

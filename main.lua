@@ -25,6 +25,7 @@ function love.load()
 end 
 
 function love.update(dt)
+    musique()
     dt = math.min(dt, 1/60)
     _mouse.x, _mouse.y = love.mouse.getPosition()
     fadeUpdate(dt)

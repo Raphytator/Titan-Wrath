@@ -3,6 +3,8 @@ function changeScene(pNewScene)
     _sceneOld = _sceneActu
     _sceneActu = pNewScene
 
+    if _musiqueActu ~= nil then _musiqueActu:stop() end
+
     if _sceneActu.initialisation == nil then 
         _sceneActu.initialisation = true
         _sceneActu.init()
@@ -41,6 +43,12 @@ end
 function playMusic(pMusique)
     if _musique then 
         pMusique:play()
+    end
+end 
+
+function musique()
+    if _musique and _musiqueActu ~= nil then 
+        if not _musiqueActu:isPlaying() then _musiqueActu:play() end
     end
 end 
 
