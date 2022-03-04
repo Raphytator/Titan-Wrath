@@ -37,6 +37,8 @@ local origineTitanY = 265
 local cloud_layer_01, cloud_layer_02, cloud_layer_03, cloud_layer_04
 local moveCloudToLeft, moveCloudToRight, moveCloud
 
+local particules = {}
+
 function jeu.init()
     shockwave.init()
     sprite.ciel = newSprite(love.graphics.newImage("img/sky.png"), 0, 0)
@@ -194,7 +196,7 @@ function jeu.init()
     
 
     titan.cooldown = {
-        [titan.etats.POING] = { actu = 0, max = 1.5, y = 0, h = 64},
+        [titan.etats.POING] = { actu = 0, max = .8, y = 0, h = 64},
         [titan.etats.VAGUE] = { actu = 0, max = 5, y = 0, h = 64},
         [titan.etats.QUAKE] = { actu = 0, max = 10, y = 0, h = 64},
     }
@@ -450,6 +452,27 @@ function jeu.update(dt)
 
         for i=1, 4 do sprite.cloud[i].x = cloud_layer[i].x end 
 
+        -- Particules de sang
+        for i=#particules, 1, -1 do 
+            local p = particules[i]
+            
+            if p.vx > 0 then p.vx = p.vx - p.vitesseX * dt 
+            else p.vx = p.vx - p.vitesseX * dt end
+
+            p.vy = p.vy + p.vitesseY * dt 
+
+
+            p.x = p.x + p.vx 
+            p.y = p.y + p.vy 
+
+            p.vie = p.vie - dt 
+
+            if p.vie > 0 then p.color[4] = p.vie / p.vieMax
+            else p.color[4] = 0 end
+
+            if p.vie < 0 then table.remove(particules, i) end             
+        end
+
     end 
 
     if _fade.fadeEnd then 
@@ -505,8 +528,17 @@ function jeu.draw()
         soldats[i]:draw()
     end 
 
+    for i=#particules, 1, -1 do 
+        local p = particules[i]
+        drawCercle("fill", p.x, p.y, p.size, p.color)
+    end 
+
     love.graphics.pop()
 
+
+    -- ===
+    -- HUD
+    -- === 
 
     -- Affichage de la santé
     sprite.receptacleSante:draw()
@@ -815,5 +847,24 @@ end
 
 -- Déplacement des nuages quelque soit le sens du parallaxe
 moveCloud = function(cloud, dt) cloud.x = cloud.x + cloud.vx * dt end
+
+function ajoutParticules(pSoldat)
+    for i=1, love.math.random(150, 250) do 
+        local particle = {}
+        local x = love.math.random(-20, 20)
+        local y = love.math.random(-20, 20)
+        particle.size = love.math.random(1,2)
+        particle.x = pSoldat.x + x
+        particle.y = pSoldat.y + y
+        particle.vx = love.math.random(-.2, .2)
+        particle.vy = 0
+        particle.vitesseX = love.math.random(.1, .3)
+        particle.vitesseY = love.math.random(.1, .6)
+        particle.vie = love.math.random(.3, .6)
+        particle.vieMax = particle.vie
+        particle.color = { love.math.random(), 0, 0, 1}
+        table.insert(particules, particle)
+    end
+end
 
 return jeu

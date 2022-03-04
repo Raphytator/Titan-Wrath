@@ -112,8 +112,7 @@ function recoitDegatsSoldats(pSoldats, pDegats, pFall)
             table.remove(pSoldats.restants, nb)
             pSoldats.soldats[id].live = false
             
-            -- Particules
-            
+            ajoutParticules(pSoldats.soldats[id])
         end
     end 
 

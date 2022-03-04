@@ -29,6 +29,7 @@ function initVariables()
     _musiqueActu = nil
     _toucheTitan = false 
     _degatsTitan = 0
+    
     fadeInitialisation()
 end 
 
