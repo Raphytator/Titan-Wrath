@@ -597,8 +597,24 @@ function jeu.effetCompetence(pComp)
         if inArray(tabDirection, s.direction) then 
             local distanceSoldats = distance(titanX, titanY, s.position.x, s.position.y)
             
-            --if distanceSoldats > 
+            if distanceSoldats < 450 then 
+
+                -- TESTS POUR DEBUG
+                table.remove(soldats, i)
+
+                if #soldats == 0 then jeu.vagueSuivante() end 
+            end 
         end 
+    end 
+end 
+
+function jeu.vagueSuivante()
+    vague.actu = vague.actu + 1
+    if vague.actu <= 10 then 
+        jeu.lancementVague()
+    else 
+        -- VICTOIRE
+        
     end 
 end 
 
