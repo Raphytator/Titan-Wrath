@@ -13,31 +13,27 @@ function shockwave.init()
     time = 0.0
     area = 0.0
     aoe = false
-    speed = 2.0
+    speed = 1.0
 
 end
 
 
 function shockwave.update(dt)
 
-    if isShocking then
-        time = time + dt
-        diameter = diameter + dt*speed
-    end
-
+    time = time + dt
+    diameter = diameter + dt*speed
+    
 end
 
 
 function shockwave.draw()
 
-    if isShocking then
-        shockwave_shader:send("diameter", diameter)
-        shockwave_shader:send("time", time)
-        shockwave_shader:send("area", area)
-        shockwave_shader:send("aoe", aoe)
-        love.graphics.setShader(shockwave_shader)
-    end
-
+    shockwave_shader:send("diameter", diameter)
+    shockwave_shader:send("time", time)
+    shockwave_shader:send("area", area)
+    shockwave_shader:send("aoe", aoe)
+    love.graphics.setShader(shockwave_shader)
+    
 end
 
 
@@ -45,10 +41,8 @@ function shockwave.launch(pAoe, pArea)
     
     if pAoe then
         aoe = true
-        isShocking = true
     else
         area = pArea or 3.0
-        isShocking = true
     end
 
 end
@@ -61,9 +55,14 @@ function shockwave.setSpeed(pSpeed)
 end
 
 
+function shockwave.send(pX, pY)
+
+    shockwave_shader:send("shake", {pX, pY})
+    
+end
+
 function shockwave.reload()
 
-    isShocking = false
     diameter = 0.1
     time = 0.0
     aoe = false

@@ -28,9 +28,8 @@ local soldats = {}
 
 local shake = { actif = false, cx = 0, cy = 0 }
 
-
+local shaderActif = false
 local timerShader = 0
-local activeShader = false
 
 function jeu.init()
     shockwave.init()
@@ -189,7 +188,16 @@ function jeu.update(dt)
     if not _fade.fadeIn and not _fade.fadeOut then
         if _etatActu == "jeu" then 
             
-            shockwave.update(dt)
+            if shaderActif then 
+                shockwave.update(dt)
+
+                timerShader = timerShader + dt 
+                if timerShader >= .8 then 
+                    timerShader = 0
+                    shockwave.reload()
+                    shaderActif = false
+                end
+            end
 
             -- Direction du Titan
             local angleMouse
@@ -272,41 +280,14 @@ function jeu.update(dt)
                     titan.vitesseFrame = 3
                 end         
                 
-                -- Compétences 
-                if titan.competenceActive then
-                    if titan.frame > #img.titan[titan.etat][titan.direction] then 
-                        
-                        titan.timerFinCompetence = titan.timerFinCompetence + dt 
-                        if titan.timerFinCompetence > .2 then 
-                            titan.timerFinCompetence = 0
-                            titan.nbCoups = titan.nbCoups + 1 
-                            titan.frame = 1
-                            jeu.effetCompetence(titan.etat)
-                            if titan.nbCoups >= titan.nbCoupsMax then   
-                                titan.cooldown[titan.etat].actu = titan.cooldown[titan.etat].max                
-                                titan.competenceActive = false                                
-                                titan.etat = titan.etats.STAND                              
-                            end
-                        end                        
-                    end 
-                end 
-
-                if activeShader then 
-                    timerShader = timerShader + dt
-                    if timerShader >= .8 then 
-                        timerShader = 0
-                        activeShader = false
-                        
-                    end
-                end
+                
 
                 -- Cooldowns
                 jeu.updateCooldown(titan.etats.POING, dt)
                 jeu.updateCooldown(titan.etats.VAGUE, dt)
                 jeu.updateCooldown(titan.etats.QUAKE, dt)
                 
-                -- Shakes
-                jeu.updateShake(dt)
+                
 
                 -- Vagues de soldats
                 if vague.spawnedSoldiers < stats.nbSoldats[vague.actu] then 
@@ -325,6 +306,29 @@ function jeu.update(dt)
 
 
             end 
+
+            -- Compétences 
+            if titan.competenceActive then
+                if titan.frame > #img.titan[titan.etat][titan.direction] then 
+                    
+                    titan.timerFinCompetence = titan.timerFinCompetence + dt 
+                    if titan.timerFinCompetence > .2 then 
+                        titan.timerFinCompetence = 0
+                        titan.nbCoups = titan.nbCoups + 1 
+                        titan.frame = 1
+                        jeu.effetCompetence(titan.etat)
+                        if titan.nbCoups >= titan.nbCoupsMax then   
+                            print("etat : "..titan.etat)
+                            titan.cooldown[titan.etat].actu = titan.cooldown[titan.etat].max -- ?? bug 
+                            titan.competenceActive = false                                
+                            titan.etat = titan.etats.STAND                              
+                        end
+                    end                        
+                end 
+            end 
+
+            -- Shakes
+            jeu.updateShake(dt)
 
         elseif _etatActu == "gameOver" then 
             tween.gameOver:update(dt)
@@ -382,7 +386,11 @@ function jeu.draw()
     love.graphics.push()
     love.graphics.translate(shake.cx, shake.cy)
     
-    shockwave.draw()    
+    if shaderActif then
+        shockwave.send(shake.cx, shake.cy)
+        shockwave.draw()
+    end
+
     sprite.terrain:draw()
     love.graphics.setShader()
     sprite.trouTerrain:draw()
@@ -580,13 +588,15 @@ function jeu.effetCompetence(pComp)
     elseif pComp == titan.etats.VAGUE then
         shake.val = 2
         shockwave.launch(false, titan.direction)        
-        activeShader = true
+        shaderActif = true
+        timerShader = 0
     elseif pComp == titan.etats.QUAKE then
         shake.val = 3
         txt.spacebar.color = {0,0,0,.3}
         tabDirection = {1,2,3,4,5}
         shockwave.launch(true)
-        activeShader = true
+        shaderActif = true
+        timerShader = 0
     end
 
     sprite.commandes[pComp - 1].alpha = .3
@@ -609,6 +619,8 @@ function jeu.effetCompetence(pComp)
 end 
 
 function jeu.vagueSuivante()
+    jeu.resetShake()    
+
     vague.actu = vague.actu + 1
     if vague.actu <= 10 then 
         jeu.lancementVague()
@@ -649,7 +661,7 @@ function jeu.resetShake()
     shake.cx = 0
     shake.cy = 0
     shake.actif = false
-    shockwave.reload()
+    
 end
 
 return jeu
