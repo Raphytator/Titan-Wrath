@@ -720,6 +720,7 @@ function jeu.nouveauJeu()
 end
 
 function jeu.lancementVague()
+    playSound(_sfx.wave)
     vague.affichage = true
     vague.etat = "apparition"
     vague.alpha = 0
@@ -884,6 +885,7 @@ function jeu.effetCompetence(pComp)
                 if vache.pv <= 0 then 
                     vache.active = false 
                     titan.pv = titan.pv + stats.vaches.gain
+                    if titan.pv > stats.pvMaxTitan then titan.pv = stats.pvMaxTitan end
                     ajoutParticules(sprite.vache)
                     playSound(_sfx.heal)
                 end 
