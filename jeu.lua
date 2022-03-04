@@ -720,15 +720,18 @@ function jeu.nouveauJeu()
 end
 
 function jeu.lancementVague()
-    playSound(_sfx.wave)
+    
     vague.affichage = true
     vague.etat = "apparition"
     vague.alpha = 0
     vague.timer = 0
-    if vague.actu < stats.nbVagues then txt.vague.txtSup = " "..vague.actu
+    if vague.actu < stats.nbVagues then
+        txt.vague.txtSup = " "..vague.actu
+        playSound(_sfx.wave)
     else 
         txt.vague.txtSup = ""
-        txt.vague.txt = getText("vagueFinale")
+        txt.vague.txt = "vagueFinale"
+        playSound(_sfx.finalWave)        
     end 
     txt.vague.color[4] = 0
 
@@ -863,17 +866,11 @@ function jeu.effetCompetence(pComp)
         local zoneVache
         local pi5 = math.pi / 5
 
-        if angleVache < pi5 then
-            zoneVache = 1
-        elseif angleVache >= pi5 and angleVache < pi5 * 2 then
-            zoneVache = 2
-        elseif angleVache >= pi5 * 2 and angleVache < pi5 * 3 then
-            zoneVache = 3
-        elseif angleVache >= pi5 * 3 and angleVache < pi5 * 4 then
-            zoneVache = 4
-        else 
-            zoneVache = 5
-        end
+        if angleVache < pi5 then zoneVache = 1
+        elseif angleVache >= pi5 and angleVache < pi5 * 2 then zoneVache = 2
+        elseif angleVache >= pi5 * 2 and angleVache < pi5 * 3 then zoneVache = 3
+        elseif angleVache >= pi5 * 3 and angleVache < pi5 * 4 then zoneVache = 4
+        else zoneVache = 5 end
 
         if pComp == titan.etats.QUAKE then zoneVache = titan.direction end
         

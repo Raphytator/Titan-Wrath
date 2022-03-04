@@ -1,7 +1,7 @@
 local stats = {}
 
 stats.pvMaxTitan = 250
-stats.nbVagues = 5
+stats.nbVagues = 1
 stats.nbSoldats = {5, 8, 12, 16, 25}
 stats.cooldown = { .8, 5, 20 }
 stats.degatsZones = {
