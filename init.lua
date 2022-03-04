@@ -36,7 +36,8 @@ end
 function initRoot()
     love.window.setMode(_ecran.w, _ecran.h)
     love.window.setTitle("Titan Wrath")
-    --love.mouse.setVisible(false)
+    local icone = love.image.newImageData("img/icone.png")
+    love.window.setIcon(icone)
 end
 
 function initImg()
