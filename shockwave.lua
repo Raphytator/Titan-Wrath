@@ -13,7 +13,7 @@ function shockwave.init()
     time = 0.0
     area = 0.0
     aoe = false
-    speed = 1.0
+    speed = 2.0
 
 end
 

@@ -28,11 +28,15 @@ local soldats = {}
 
 local shake = { actif = false, cx = 0, cy = 0 }
 
+
+local timerShader = 0
+local activeShader = false
+
 function jeu.init()
     shockwave.init()
-    sprite.terrain = newSprite(love.graphics.newImage("img/terrain.png"), -100, -50)
-    img.trouTerrain = love.graphics.newImage("img/trouTerrain.png")
-    sprite.trouTerrain = newSprite(img.trouTerrain, (_ecran.w - img.trouTerrain:getWidth()) / 2, 235)
+    --sprite.terrain = newSprite(love.graphics.newImage("img/terrain.png"), -100, -50)
+    sprite.terrain = newSprite(love.graphics.newImage("img/terrain.png"), 0, 0)
+    
 
     img.boutonCompetence = love.graphics.newImage("img/btnCompetence.png")
     
@@ -71,33 +75,54 @@ function jeu.init()
         DEAD = 5
     }
     
+    img.titanIdle = {
+        love.graphics.newImage("img/Titan1.png"),        
+        love.graphics.newImage("img/Titan2.png"),        
+        love.graphics.newImage("img/Titan3.png")
+    }
+
+    img.titanCompetencesFrame2 = love.graphics.newImage("img/CompetencesFrame1.png")
+
+    img.titanCompetences = {
+        [1] = {
+            [1] = love.graphics.newImage("img/Titan1Competence1Frame2.png"),
+            [2] = love.graphics.newImage("img/Titan2Competence1Frame2.png"),
+            [3] = love.graphics.newImage("img/Titan3Competence1Frame2.png")
+        },
+        [2] = {
+            [1] = love.graphics.newImage("img/Titan1Competence2Frame2.png"),
+            [2] = love.graphics.newImage("img/Titan2Competence2Frame2.png"),
+            [3] = love.graphics.newImage("img/Titan3Competence2Frame2.png")
+        }
+    }
+
     img.titan = {}
     img.titan[titan.etats.STAND] = {
-        [1] = { love.graphics.newImage("img/Titan2.png") },
-        [2] = { love.graphics.newImage("img/Titan3.png") },
-        [3] = { love.graphics.newImage("img/Titan1.png") },
-        [4] = { love.graphics.newImage("img/Titan3.png") },
-        [5] = { love.graphics.newImage("img/Titan2.png") }
+        [1] = { img.titanIdle[3] },
+        [2] = { img.titanIdle[2] },
+        [3] = { img.titanIdle[1] },
+        [4] = { img.titanIdle[2] },
+        [5] = { img.titanIdle[3] }
     }
 
     img.titan[titan.etats.POING] = {
-        [1] = { love.graphics.newImage("img/Titan2Competence1Frame1.png"), love.graphics.newImage("img/Titan2Competence1Frame2.png")},
-        [2] = { love.graphics.newImage("img/Titan3Competence1Frame1.png"), love.graphics.newImage("img/Titan3Competence1Frame2.png") },
-        [3] = { love.graphics.newImage("img/Titan1Competence1Frame1.png"), love.graphics.newImage("img/Titan1Competence1Frame2.png") },
-        [4] = { love.graphics.newImage("img/Titan3Competence1Frame1.png"), love.graphics.newImage("img/Titan3Competence1Frame2.png") },
-        [5] = { love.graphics.newImage("img/Titan2Competence1Frame1.png"), love.graphics.newImage("img/Titan2Competence1Frame2.png") }
+        [1] = { img.titanCompetencesFrame2, img.titanCompetences[1][3]},
+        [2] = { img.titanCompetencesFrame2, img.titanCompetences[1][2] },
+        [3] = { img.titanCompetencesFrame2, img.titanCompetences[1][1] },
+        [4] = { img.titanCompetencesFrame2, img.titanCompetences[1][2] },
+        [5] = { img.titanCompetencesFrame2, img.titanCompetences[1][3] }
     }
 
     img.titan[titan.etats.VAGUE] = {
-        [1] = { love.graphics.newImage("img/Titan2Competence2Frame1.png"), love.graphics.newImage("img/Titan2Competence2Frame2.png")},
-        [2] = { love.graphics.newImage("img/Titan3Competence2Frame1.png"), love.graphics.newImage("img/Titan3Competence2Frame2.png") },
-        [3] = { love.graphics.newImage("img/Titan1Competence2Frame1.png"), love.graphics.newImage("img/Titan1Competence2Frame2.png") },
-        [4] = { love.graphics.newImage("img/Titan3Competence2Frame1.png"), love.graphics.newImage("img/Titan3Competence2Frame2.png") },
-        [5] = { love.graphics.newImage("img/Titan2Competence2Frame1.png"), love.graphics.newImage("img/Titan2Competence2Frame2.png") }
+        [1] = { img.titanCompetencesFrame2, img.titanCompetences[2][3]},
+        [2] = { img.titanCompetencesFrame2, img.titanCompetences[2][2] },
+        [3] = { img.titanCompetencesFrame2, img.titanCompetences[2][1] },
+        [4] = { img.titanCompetencesFrame2, img.titanCompetences[2][2] },
+        [5] = { img.titanCompetencesFrame2, img.titanCompetences[2][3] }
     }
 
     img.titan[titan.etats.QUAKE] = {
-        [1] = { love.graphics.newImage("img/Titan1Competence3Frame1.png"), love.graphics.newImage("img/Titan1Competence3Frame2.png")}
+        [1] = { img.titanCompetencesFrame2, love.graphics.newImage("img/Competence3Frame2.png")}
     }
 
     img.titan[titan.etats.DEAD] = {
@@ -107,7 +132,12 @@ function jeu.init()
         }
     }
 
-    sprite.titan = newSprite(img.titan[1][1][1], sprite.trouTerrain.x + img.titan[1][1][1]:getWidth() / 2, 40 + img.titan[1][1][1]:getHeight() / 2, 1, true)
+    img.trouTerrain = love.graphics.newImage("img/trouTerrain.png")
+    sprite.trouTerrain = newSprite(img.trouTerrain, (_ecran.w - img.trouTerrain:getWidth()) / 2, 40)
+
+    sprite.titan = newSprite(img.titan[1][1][1], sprite.trouTerrain.x + img.titan[1][1][1]:getWidth() / 2, sprite.trouTerrain.y + img.titan[1][1][1]:getHeight() / 2, 1, true)
+
+    
 
     titan.cooldown = {
         [titan.etats.POING] = { actu = 0, max = 1.5, y = 0, h = 64},
@@ -261,6 +291,15 @@ function jeu.update(dt)
                     end 
                 end 
 
+                if activeShader then 
+                    timerShader = timerShader + dt
+                    if timerShader >= .8 then 
+                        timerShader = 0
+                        activeShader = false
+                        
+                    end
+                end
+
                 -- Cooldowns
                 jeu.updateCooldown(titan.etats.POING, dt)
                 jeu.updateCooldown(titan.etats.VAGUE, dt)
@@ -340,10 +379,10 @@ function jeu.draw()
     
     drawRectangle("fill", 0, 0, _ecran.w, _ecran.h, {.1, .5, .8, 1})
 
-    shockwave.draw()
     love.graphics.push()
     love.graphics.translate(shake.cx, shake.cy)
-
+    
+    shockwave.draw()    
     sprite.terrain:draw()
     love.graphics.setShader()
     sprite.trouTerrain:draw()
@@ -422,9 +461,7 @@ end
 
 function jeu.mousepressed(x, y, button, istouch, presses)
 
-    if not vague.affichage and not titan.competenceActive and _etatActu == "jeu" then
-        
-        
+    if not vague.affichage and not titan.competenceActive and _etatActu == "jeu" then       
         if button == 1 then 
             if titan.cooldown[titan.etats.POING].actu == 0 then 
                 jeu.activeCompetence(titan.etats.POING)
@@ -543,11 +580,13 @@ function jeu.effetCompetence(pComp)
     elseif pComp == titan.etats.VAGUE then
         shake.val = 2
         shockwave.launch(false, titan.direction)        
+        activeShader = true
     elseif pComp == titan.etats.QUAKE then
         shake.val = 3
         txt.spacebar.color = {0,0,0,.3}
         tabDirection = {1,2,3,4,5}
         shockwave.launch(true)
+        activeShader = true
     end
 
     sprite.commandes[pComp - 1].alpha = .3
@@ -594,6 +633,7 @@ function jeu.resetShake()
     shake.cx = 0
     shake.cy = 0
     shake.actif = false
+    shockwave.reload()
 end
 
 return jeu
