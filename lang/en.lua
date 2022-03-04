@@ -44,7 +44,7 @@ lang.creditsTxt1 = "Developed with Love2D for Löve Gamejam 2022"
 lang.creditsTxt2 = "Babbou (Graphics)"
 lang.creditsTxt3 = "Bsy (Graphics)"
 lang.creditsTxt4 = "Lysenti (Shaders programing, Music)"
-lang.creditsTxt5 = "Raphytator (Programing, Gamedesign)"
+lang.creditsTxt5 = "Raphytator (Programing, Gamedesign, Sound Design)"
 lang.creditsTxt6 = "Thanks to Cehem for his precious help in maths"
 
 -- ===

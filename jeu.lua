@@ -38,6 +38,20 @@ local cloud_layer_01, cloud_layer_02, cloud_layer_03, cloud_layer_04
 local moveCloudToLeft, moveCloudToRight, moveCloud
 
 local particules = {}
+local vache = { active = false, vitesse = stats.vaches.vitesse, timerShader = 0, touche = false }
+
+local shaderRouge = love.graphics.newShader[[
+    vec4 effect(vec4 color, Image texture, vec2 textureCoord, vec2 screenCoord) {
+        vec4 texColor = Texel(texture, textureCoord);
+        if (texColor.a != 0) {
+            texColor.r = 1;
+            texColor.g = 0;
+            texColor.b = 0;
+            return texColor;
+        }
+    }
+]]
+
 
 function jeu.init()
     shockwave.init()
@@ -202,6 +216,8 @@ function jeu.init()
     }
    
     initSoldats()
+
+    sprite.vache = newSprite(love.graphics.newImage("img/cow.png"), 0, 0, 1, true)
 
     -- =========
     -- Game over
@@ -439,6 +455,18 @@ function jeu.update(dt)
             sprite.titan.img = img.titan[titan.etat][titan.direction][math.floor(titan.frame)]
         end
 
+        -- Vache
+        if vache.active then 
+            sprite.vache.x = sprite.vache.x + vache.vx * dt
+            if vache.touche then 
+                vache.timerShader = vache.timerShader + dt 
+                if vache.timerShader > .1 then 
+                    vache.timerShader = 0
+                    vache.touche = false 
+                end
+            end 
+        end
+
         -- Clouds layer back
         moveCloudToLeft(cloud_layer[1], -1, dt)
         moveCloudToRight(cloud_layer[2], 1, dt)
@@ -460,7 +488,6 @@ function jeu.update(dt)
             else p.vx = p.vx - p.vitesseX * dt end
 
             p.vy = p.vy + p.vitesseY * dt 
-
 
             p.x = p.x + p.vx 
             p.y = p.y + p.vy 
@@ -522,6 +549,13 @@ function jeu.draw()
     love.graphics.setShader()
     sprite.trouTerrain:draw()
     sprite.titan:draw()
+
+
+    if vache.active then 
+        if vache.touche then love.graphics.setShader(shaderRouge) end
+        sprite.vache:draw() 
+        love.graphics.setShader()
+    end
 
     -- Soldats
     for i=1, #soldats do 
@@ -683,12 +717,19 @@ function jeu.lancementVague()
     vague.spawnSoldiersTimer = 0
     vague.spawnSoldiersTimerMax = 0
     vague.spawnedSoldiers = 0
+
+    vache.vague = math.ceil(stats.nbSoldats[vague.actu] / 2)
 end 
 
 function jeu.spawnSoldiers()
     vague.spawnSoldiersTimer = 0
     vague.spawnSoldiersTimerMax = love.math.random(3, 6)
     vague.spawnedSoldiers = vague.spawnedSoldiers + 1
+
+    -- Vache 
+    if vache.vague == vague.spawnedSoldiers then 
+        jeu.spawnVache()
+    end
 
     local nb = love.math.random(0, 100)
     local nbSpawn
@@ -699,6 +740,22 @@ function jeu.spawnSoldiers()
     for i=1, nbSpawn do 
         local soldatsTMP = newSoldats()
         table.insert(soldats, soldatsTMP)
+    end
+end 
+
+function jeu.spawnVache()
+    playSound(_sfx.vache)
+    sprite.vache.y = love.math.random(400, 600)
+    vache.pv = stats.vaches.pv 
+    vache.active = true
+    if love.math.random(0, 100) <= 50 then -- Droite à gauche        
+        sprite.vache.x = _ecran.w + sprite.vache.img:getWidth() / 2 + 1
+        vache.vx = -stats.vaches.vitesse
+        sprite.vache.sx = -1
+    else -- Gauche à droite
+        sprite.vache.x = -sprite.vache.img:getWidth() / 2 - 1
+        sprite.vache.sx = 1
+        vache.vx = stats.vaches.vitesse
     end
 end 
 
@@ -730,18 +787,21 @@ function jeu.effetCompetence(pComp)
     local tabDirection = { titan.direction }
     local zones = stats.degatsZones[pComp - 1] -- Dégats en fonction des zones
     local fall = false
+    local dgtVache
 
     playSound(_sfx.poing)
 
     shake.actif = true
     if pComp == titan.etats.POING then        
-        shake.val = 1        
+        shake.val = 1      
+        dgtVache = 4  
     elseif pComp == titan.etats.VAGUE then
         shake.val = 2
         shockwave.launch(false, titan.direction)        
         shaderActif = true
         timerShader = 0
         fall = true
+        dgtVache = 6
     elseif pComp == titan.etats.QUAKE then
         shake.val = 3
         txt.spacebar.color = {0,0,0,.3}
@@ -750,6 +810,7 @@ function jeu.effetCompetence(pComp)
         shaderActif = true
         timerShader = 0
         fall = true
+        dgtVache = 2
     end
 
     sprite.commandes[pComp - 1].alpha = .3
@@ -777,6 +838,41 @@ function jeu.effetCompetence(pComp)
     end 
 
     if #soldats == 0 and vague.spawnedSoldiers == stats.nbSoldats[vague.actu] then jeu.vagueSuivante() end 
+
+    -- Vache
+    if vache.active then 
+        local angleVache = math.angle(titanX, titanY, sprite.vache.x, sprite.vache.y)
+        local zoneVache
+        local pi5 = math.pi / 5
+
+        if angleVache < pi5 then
+            zoneVache = 1
+        elseif angleVache >= pi5 and angleVache < pi5 * 2 then
+            zoneVache = 2
+        elseif angleVache >= pi5 * 2 and angleVache < pi5 * 3 then
+            zoneVache = 3
+        elseif angleVache >= pi5 * 3 and angleVache < pi5 * 4 then
+            zoneVache = 4
+        else 
+            zoneVache = 5
+        end
+
+        if pComp == titan.etats.QUAKE then zoneVache = titan.direction end
+        
+        if zoneVache == titan.direction then 
+            if sprite.vache.x > 0 and sprite.vache.x < _ecran.w then 
+                vache.pv = vache.pv - dgtVache
+                vache.touche = true
+                vache.timerShader = 0
+                if vache.pv <= 0 then 
+                    vache.active = false 
+                    titan.pv = titan.pv + stats.vaches.gain
+                    ajoutParticules(sprite.vache)
+                    playSound(_sfx.heal)
+                end 
+            end
+        end
+    end 
 end 
 
 function jeu.vagueSuivante()

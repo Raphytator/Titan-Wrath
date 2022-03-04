@@ -18,6 +18,7 @@ function updateSoldats(pSoldat, dt)
     if pSoldat.live and not pSoldat.fall then 
         if math.floor(distance(pSoldat.position.x, pSoldat.position.y, pSoldat.arrivee.x, pSoldat.arrivee.y)) > 4 then 
             pSoldat.position = pSoldat.position + (dt / vitesseDeplSoldats) * pSoldat.parcours
+            
         else 
             pSoldat.position.x = pSoldat.arrivee.x 
             pSoldat.position.y = pSoldat.arrivee.y 
@@ -182,7 +183,6 @@ function newSoldats()
     s.arrivee = newVector(arriveeX, arriveeY)
     s.parcours = s.arrivee - s.depart
     s.position = s.depart
-    
 
     s.soldats = {}
     for i=1, 12 do  s.soldats[i] = { x = 0, y = 0, ox = img.soldat[s.direction][s.frame]:getWidth() / 2, oy = img.soldat[s.direction][s.frame]:getHeight() / 2, live = true} end
