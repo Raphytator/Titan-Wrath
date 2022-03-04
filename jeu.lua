@@ -40,6 +40,9 @@ function jeu.init()
     shockwave.init()
     sprite.ciel = newSprite(love.graphics.newImage("img/sky.png"), 0, 0)
 
+    img.backgroundFixe = love.graphics.newImage("img/background_fixe.png")
+    sprite.backgroundFixe = newSprite(img.backgroundFixe, (_ecran.w - img.backgroundFixe:getWidth()) / 2, 0)
+
     img.background = love.graphics.newImage("img/background.png")
     local bgx = (_ecran.w - img.background:getWidth())/2
     sprite.terrain = newSprite(img.background, bgx, 0)
@@ -483,6 +486,8 @@ function jeu.draw()
 
     love.graphics.push()
     love.graphics.translate(shake.cx, shake.cy)
+
+    sprite.backgroundFixe:draw()
     
     if shaderActif then
         shockwave.send(shake.cx, shake.cy)
