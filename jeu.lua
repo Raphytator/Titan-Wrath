@@ -23,8 +23,10 @@ local titan = {}
 local mid = _ecran.w / 2
 local alphaVoile
 local departGameOver
+
 local vague = {}
 local soldats = {}
+local victoire = {}
 
 local shake = { actif = false, cx = 0, cy = 0 }
 
@@ -36,7 +38,7 @@ local moveCloudToLeft, moveCloudToRight, moveCloud
 
 function jeu.init()
     shockwave.init()
-    sprite.ciel = newSprite(love.graphics.newImage("img/newSky.png"), 0, 0)
+    sprite.ciel = newSprite(love.graphics.newImage("img/sky.png"), 0, 0)
 
     img.background = love.graphics.newImage("img/background.png")
     local bgx = (_ecran.w - img.background:getWidth())/2
@@ -109,7 +111,7 @@ function jeu.init()
     spriteQuad.barreSante = newQuadSprite(love.graphics.newImage("img/barreSante.png"), sprite.receptacleSante.x, sprite.receptacleSante.y)
 
     txt.vague = newTxt("vague", _fonts.gameOver, 0, 300, {.1, .1, .1, 0}, _ecran.w, "center")
-    txt.victoire = newTxt("victoire", _fonts.gameOver, 0, 300, {.8,.8,.8,0}, _ecran.w, "center")
+    txt.victoire = newTxt("victoire", _fonts.victoire, 0, 300, {.8,.8,.8,0}, _ecran.w, "center")
 
     -- =====
     -- TITAN
@@ -337,11 +339,13 @@ function jeu.update(dt)
                                 
 
                 -- Vagues de soldats
-                if vague.spawnedSoldiers < stats.nbSoldats[vague.actu] then 
-                    vague.spawnSoldiersTimer = vague.spawnSoldiersTimer + dt 
-                    if vague.spawnSoldiersTimer >= vague.spawnSoldiersTimerMax then 
-                        jeu.spawnSoldiers()
-                    end 
+                if _etatActu == "jeu" then 
+                    if vague.spawnedSoldiers < stats.nbSoldats[vague.actu] then 
+                        vague.spawnSoldiersTimer = vague.spawnSoldiersTimer + dt 
+                        if vague.spawnSoldiersTimer >= vague.spawnSoldiersTimerMax then 
+                            jeu.spawnSoldiers()
+                        end 
+                    end
                 end 
  
                 -- Soldats
@@ -364,10 +368,13 @@ function jeu.update(dt)
                         titan.nbCoups = titan.nbCoups + 1 
                         titan.frame = 1
                         jeu.effetCompetence(titan.etat)
+
                         if titan.nbCoups >= titan.nbCoupsMax then
-                            titan.cooldown[titan.etat].actu = titan.cooldown[titan.etat].max -- ?? bug 
+                            titan.cooldown[titan.etat].actu = titan.cooldown[titan.etat].max 
                             titan.competenceActive = false                                
-                            titan.etat = titan.etats.STAND                              
+                            titan.etat = titan.etats.STAND   
+                            titan.frame = 1 
+                            titan.direction = 3                  
                         end
                     end                        
                 end 
@@ -378,12 +385,33 @@ function jeu.update(dt)
 
             if _etatActu == "victoire" then 
 
-                if alphaVoile < .7 then 
-                    alphaVoile = alphaVoile + dt
-
-                end
-
-                --txt.victoire.color = 
+                if victoire.etat == "apparition" then 
+                    local vitesse = 6
+                    if alphaVoile < .7 then alphaVoile = alphaVoile + dt / vitesse * .7 end
+                    if victoire.alpha < 1 then 
+                        victoire.alpha = victoire.alpha + dt / vitesse
+                        txt.victoire.color = {1,1,1,victoire.alpha}
+                    else 
+                        victoire.etat = "standby"
+                        victoire.timer = 0
+                    end 
+                elseif victoire.etat == "standby" then
+                    if victoire.timer < 2.5 then 
+                        victoire.timer = victoire.timer + dt
+                    else 
+                        victoire.voileFinal = 0
+                        victoire.etat = "disparition"
+                    end 
+                elseif victoire.etat == "disparition" then 
+                    local vitesse = 2
+                    if victoire.voileFinal < 1 then 
+                        victoire.voileFinal = victoire.voileFinal + dt / vitesse
+                        victoire.alpha = victoire.alpha - dt / vitesse
+                        txt.victoire.color = {1,1,1,victoire.alpha}
+                    else 
+                        fadeOut("victory")
+                    end 
+                end 
             end
 
         elseif _etatActu == "gameOver" then 
@@ -506,6 +534,10 @@ function jeu.draw()
     elseif _etatActu == "victoire" then 
         drawVoile(alphaVoile)
         txt.victoire:print()
+
+        if victoire.etat == "disparition" then 
+            drawVoile(victoire.voileFinal)
+        end 
     end
 end 
 
@@ -679,7 +711,7 @@ function jeu.effetCompetence(pComp)
         if inArray(tabDirection, s.direction) then 
             local distanceSoldats = distance(titanX, titanY, s.position.x, s.position.y)
             
-            if distanceSoldats < 450 then 
+            if distanceSoldats < 850 then 
 
                 -- TESTS POUR DEBUG
                 table.remove(soldats, i)
@@ -694,11 +726,16 @@ function jeu.vagueSuivante()
     jeu.resetShake()    
 
     vague.actu = vague.actu + 1
-    if vague.actu <= 10 then 
+    if vague.actu < stats.nbVagues then 
         jeu.lancementVague()
     else 
+        
         -- VICTOIRE
         alphaVoile = 0
+        victoire.alpha = 0
+        victoire.etat = "apparition"
+        --titan.direction = 3
+
         changeEtat("victoire")
     end 
 end 
