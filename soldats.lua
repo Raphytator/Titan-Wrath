@@ -53,7 +53,10 @@ function drawSoldats(pSoldat)
 
     for i=1, #pSoldat.soldats do 
         local s = pSoldat.soldats[i]
-        if s.live then love.graphics.draw(img.soldat[pSoldat.direction][pSoldat.frame], s.x, s.y, pSoldat.r, pSoldat.sx, pSoldat.sy, s.ox, s.oy) end
+        if s.live then 
+            love.graphics.draw(img.soldat[pSoldat.direction][pSoldat.frame], s.x, s.y, pSoldat.r, pSoldat.sx, pSoldat.sy, s.ox, s.oy)
+            
+        end
     end
 end 
 
@@ -132,7 +135,27 @@ function newSoldats()
 
     s.frame = 1
     s.direction = love.math.random(1, 5)
-    s.angle = math.pi / 5 * s.direction - math.pi / 10
+
+    local angleSpe, milieuAngle 
+    if s.direction == 1 then 
+        angleSpe = math.pi / 6
+        milieuAngle = -math.pi / 12 
+    elseif s.direction == 2 then 
+        angleSpe = 11 * math.pi / 30
+        milieuAngle = -math.pi / 10
+    elseif s.direction == 3 then 
+        angleSpe = 19 * math.pi / 30
+        milieuAngle = -2*math.pi / 15
+    elseif s.direction == 4 then 
+        angleSpe = 5 * math.pi / 6
+        milieuAngle = -math.pi / 10
+    elseif s.direction == 5 then 
+        angleSpe = math.pi
+        milieuAngle = -math.pi / 12
+    end 
+
+    --s.angle = math.pi / 5 * s.direction - math.pi / 10
+    s.angle = angleSpe + milieuAngle 
     s.timerFrame = 0
     s.fall = false
     s.timerFall = 0

@@ -9,5 +9,10 @@ stats.degatsZones = {
     [2] = {6, 4, 2, 1},
     [3] = {2, 1, 1, 1}
 }
+stats.vaches = {
+    pv = 8,
+    gain = 80
+}
+
 
 return stats
