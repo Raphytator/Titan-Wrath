@@ -55,6 +55,7 @@ function initMusic()
     _music.wave = love.audio.newSource("music/wave.ogg", "stream")
     _music.finalWave = love.audio.newSource("music/last.ogg", "stream")
     _music.gameOver = love.audio.newSource("music/gameover.ogg", "stream")
+    _music.victoire = love.audio.newSource("music/victory.ogg", "stream")
 end 
 
 function initSfx()

@@ -902,6 +902,7 @@ function jeu.vagueSuivante()
         victoire.alpha = 0
         victoire.etat = "apparition"
         changeEtat("victoire")
+        playMusic(_music.victoire)
     end 
 end 
 
