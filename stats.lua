@@ -1,8 +1,7 @@
 local stats = {}
 
 stats.pvMaxTitan = 250
-stats.nbVagues = 5
-stats.nbSoldats = {1, 8, 12, 15, 20}
-
+stats.nbVagues = 1
+stats.nbSoldats = {1, 8, 18}
 
 return stats

@@ -31,11 +31,59 @@ local shake = { actif = false, cx = 0, cy = 0 }
 local shaderActif = false
 local timerShader = 0
 
+local cloud_layer_01, cloud_layer_02, cloud_layer_03, cloud_layer_04
+local moveCloudToLeft, moveCloudToRight, moveCloud
+
 function jeu.init()
     shockwave.init()
-    --sprite.terrain = newSprite(love.graphics.newImage("img/terrain.png"), -100, -50)
-    sprite.terrain = newSprite(love.graphics.newImage("img/terrain.png"), 0, 0)
+    sprite.ciel = newSprite(love.graphics.newImage("img/newSky.png"), 0, 0)
+
+    img.background = love.graphics.newImage("img/background.png")
+    local bgx = (_ecran.w - img.background:getWidth())/2
+    sprite.terrain = newSprite(img.background, bgx, 0)
+
+    cloud_layer = {}
+    cloud_layer[1] = {
+        img = love.graphics.newImage("img/cloud_layer_01.png"),
+        x = 820,
+        y = -50,
+        vx = 0,
+        vy = 0,
+        spd = {acceleration = 2, max = 15}
+    }
+
+    cloud_layer[2] = {
+        img = love.graphics.newImage("img/cloud_layer_02.png"),
+        x = -450,
+        y = -50,
+        vx = 0,
+        vy = 0,
+        spd = {acceleration = 2, max = 7}
+    }
+
+    cloud_layer[3] = {
+        img = love.graphics.newImage("img/cloud_layer_03.png"),
+        x = 150,
+        y = 62,
+        vx = 0,
+        vy = 0,
+        spd = {acceleration = 2, max = 4}
+    }
+
+    cloud_layer[4] = {
+        img = love.graphics.newImage("img/cloud_layer_04.png"),
+        x = 800,
+        y = 86,
+        vx = 0,
+        vy = 0,
+        spd = {acceleration = 2, max = 10}
+    }
     
+    sprite.cloud = {}
+    for i=1, 4 do 
+        sprite.cloud[i] = newSprite(cloud_layer[i].img, cloud_layer[i].x, cloud_layer[i].y)
+    end 
+
 
     img.boutonCompetence = love.graphics.newImage("img/btnCompetence.png")
     
@@ -61,6 +109,7 @@ function jeu.init()
     spriteQuad.barreSante = newQuadSprite(love.graphics.newImage("img/barreSante.png"), sprite.receptacleSante.x, sprite.receptacleSante.y)
 
     txt.vague = newTxt("vague", _fonts.gameOver, 0, 300, {.1, .1, .1, 0}, _ecran.w, "center")
+    txt.victoire = newTxt("victoire", _fonts.gameOver, 0, 300, {.8,.8,.8,0}, _ecran.w, "center")
 
     -- =====
     -- TITAN
@@ -186,7 +235,7 @@ end
 function jeu.update(dt)
 
     if not _fade.fadeIn and not _fade.fadeOut then
-        if _etatActu == "jeu" then 
+        if inArray({"victoire", "jeu"}, _etatActu) then 
             
             if shaderActif then 
                 shockwave.update(dt)
@@ -207,7 +256,7 @@ function jeu.update(dt)
 
                 angleMouse = math.abs(math.angle(mid, posY, _mouse.x, _mouse.y))
 
-                if not titan.competenceActive then 
+                if not titan.competenceActive and _etatActu == "jeu" then 
                     if angleMouse < pi5 then
                         titan.direction = 1
                     elseif angleMouse >= pi5 and angleMouse < pi5 * 2 then
@@ -280,14 +329,12 @@ function jeu.update(dt)
                     titan.vitesseFrame = 3
                 end         
                 
-                
 
                 -- Cooldowns
                 jeu.updateCooldown(titan.etats.POING, dt)
                 jeu.updateCooldown(titan.etats.VAGUE, dt)
                 jeu.updateCooldown(titan.etats.QUAKE, dt)
-                
-                
+                                
 
                 -- Vagues de soldats
                 if vague.spawnedSoldiers < stats.nbSoldats[vague.actu] then 
@@ -317,8 +364,7 @@ function jeu.update(dt)
                         titan.nbCoups = titan.nbCoups + 1 
                         titan.frame = 1
                         jeu.effetCompetence(titan.etat)
-                        if titan.nbCoups >= titan.nbCoupsMax then   
-                            print("etat : "..titan.etat)
+                        if titan.nbCoups >= titan.nbCoupsMax then
                             titan.cooldown[titan.etat].actu = titan.cooldown[titan.etat].max -- ?? bug 
                             titan.competenceActive = false                                
                             titan.etat = titan.etats.STAND                              
@@ -329,6 +375,16 @@ function jeu.update(dt)
 
             -- Shakes
             jeu.updateShake(dt)
+
+            if _etatActu == "victoire" then 
+
+                if alphaVoile < .7 then 
+                    alphaVoile = alphaVoile + dt
+
+                end
+
+                --txt.victoire.color = 
+            end
 
         elseif _etatActu == "gameOver" then 
             tween.gameOver:update(dt)
@@ -348,6 +404,19 @@ function jeu.update(dt)
         if math.floor(titan.frame) <= #img.titan[titan.etat][titan.direction] then
             sprite.titan.img = img.titan[titan.etat][titan.direction][math.floor(titan.frame)]
         end
+
+        -- Clouds layer back
+        moveCloudToLeft(cloud_layer[1], -1, dt)
+        moveCloudToRight(cloud_layer[2], 1, dt)
+        -- Clouds layer middle
+        moveCloudToRight(cloud_layer[3], 1, dt)
+        moveCloudToLeft(cloud_layer[4], -1, dt)
+        moveCloud(cloud_layer[1], dt)
+        moveCloud(cloud_layer[2], dt)
+        moveCloud(cloud_layer[3], dt)
+        moveCloud(cloud_layer[4], dt)
+
+        for i=1, 4 do sprite.cloud[i].x = cloud_layer[i].x end 
 
     end 
 
@@ -380,8 +449,9 @@ end
 
 function jeu.draw()
 
-    
-    drawRectangle("fill", 0, 0, _ecran.w, _ecran.h, {.1, .5, .8, 1})
+    sprite.ciel:draw()
+
+    for i=1, 4 do sprite.cloud[i]:draw() end 
 
     love.graphics.push()
     love.graphics.translate(shake.cx, shake.cy)
@@ -433,8 +503,10 @@ function jeu.draw()
             btn.rejouer:draw()
             btn.menuPrincipal:draw()
         end
-    end 
-
+    elseif _etatActu == "victoire" then 
+        drawVoile(alphaVoile)
+        txt.victoire:print()
+    end
 end 
 
 --[[
@@ -626,7 +698,8 @@ function jeu.vagueSuivante()
         jeu.lancementVague()
     else 
         -- VICTOIRE
-        
+        alphaVoile = 0
+        changeEtat("victoire")
     end 
 end 
 
@@ -663,5 +736,26 @@ function jeu.resetShake()
     shake.actif = false
     
 end
+
+-- MAJ des coordonnées parallaxe des nuage vers la gauche
+moveCloudToLeft = function(cloud, direction, dt)
+    if cloud.x > -cloud.img:getWidth() then
+        cloud.vx = math.max(-cloud.spd.max, cloud.vx + direction * (cloud.spd.acceleration + dt))
+    else
+        cloud.x = _ecran.w
+    end
+end
+
+-- MAJ des coordonnées paralaxe des nuage vers la droite
+moveCloudToRight = function(cloud, direction, dt)
+    if cloud.x < _ecran.w then
+        cloud.vx = math.min(cloud.spd.max, cloud.vx + direction * (cloud.spd.acceleration + dt))
+    else
+        cloud.x = -cloud.img:getWidth()
+    end
+end
+
+-- Déplacement des nuages quelque soit le sens du parallaxe
+moveCloud = function(cloud, dt) cloud.x = cloud.x + cloud.vx * dt end
 
 return jeu
