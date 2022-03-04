@@ -32,6 +32,7 @@ local shake = { actif = false, cx = 0, cy = 0 }
 
 local shaderActif = false
 local timerShader = 0
+local origineTitanY = 265
 
 local cloud_layer_01, cloud_layer_02, cloud_layer_03, cloud_layer_04
 local moveCloudToLeft, moveCloudToRight, moveCloud
@@ -256,10 +257,10 @@ function jeu.update(dt)
             -- Direction du Titan
             local angleMouse
             local pi5 = math.pi / 5
-            local posY = 265
-            if _mouse.y >= posY then 
 
-                angleMouse = math.abs(math.angle(mid, posY, _mouse.x, _mouse.y))
+            if _mouse.y >= origineTitanY then 
+
+                angleMouse = math.abs(math.angle(mid, origineTitanY, _mouse.x, _mouse.y))
 
                 if not titan.competenceActive and _etatActu == "jeu" then 
                     if angleMouse < pi5 then
@@ -506,6 +507,7 @@ function jeu.draw()
 
     love.graphics.pop()
 
+
     -- Affichage de la santé
     sprite.receptacleSante:draw()
     spriteQuad.barreSante:draw()
@@ -688,17 +690,22 @@ end
 
 function jeu.effetCompetence(pComp)
     local titanX = _ecran.w / 2
-    local titanY = 265
+    local titanY = origineTitanY
     local tabDirection = { titan.direction }
+    local zones = {} -- Dégats en fonction des zones
+    local fall = false
 
     shake.actif = true
     if pComp == titan.etats.POING then        
         shake.val = 1
+        zones = {5, 3, 1, 0}
     elseif pComp == titan.etats.VAGUE then
         shake.val = 2
         shockwave.launch(false, titan.direction)        
         shaderActif = true
         timerShader = 0
+        zones = {6, 4, 2, 1}
+        fall = true
     elseif pComp == titan.etats.QUAKE then
         shake.val = 3
         txt.spacebar.color = {0,0,0,.3}
@@ -706,6 +713,8 @@ function jeu.effetCompetence(pComp)
         shockwave.launch(true)
         shaderActif = true
         timerShader = 0
+        zones = {4, 3, 2, 1}
+        fall = true
     end
 
     sprite.commandes[pComp - 1].alpha = .3
@@ -716,15 +725,27 @@ function jeu.effetCompetence(pComp)
         if inArray(tabDirection, s.direction) then 
             local distanceSoldats = distance(titanX, titanY, s.position.x, s.position.y)
             
-            if distanceSoldats < 850 then 
 
-                -- TESTS POUR DEBUG
-                table.remove(soldats, i)
+            if distanceSoldats < 780 then 
+                local zoneDegats
 
-                if #soldats == 0 then jeu.vagueSuivante() end 
+                if distanceSoldats <= 180 then zoneDegats = 1                    
+                elseif distanceSoldats <= 380 then zoneDegats = 2                
+                elseif distanceSoldats <= 580 then zoneDegats = 3                
+                else zoneDegats = 4 end 
+
+                s:recoitDegats(zones[zoneDegats], fall)
+                
+                if not s.live then 
+                    table.remove(soldats, i)
+                end
             end 
         end 
+
+        
     end 
+
+    if #soldats == 0 and vague.spawnedSoldiers == stats.nbSoldats[vague.actu] then jeu.vagueSuivante() end 
 end 
 
 function jeu.vagueSuivante()
@@ -734,13 +755,10 @@ function jeu.vagueSuivante()
     if vague.actu < stats.nbVagues then 
         jeu.lancementVague()
     else 
-        
         -- VICTOIRE
         alphaVoile = 0
         victoire.alpha = 0
         victoire.etat = "apparition"
-        --titan.direction = 3
-
         changeEtat("victoire")
     end 
 end 

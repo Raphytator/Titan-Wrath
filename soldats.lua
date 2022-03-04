@@ -15,34 +15,36 @@ end
 
 function updateSoldats(pSoldat, dt)
     local vitesseDeplSoldats = 15
-    if math.floor(distance(pSoldat.position.x, pSoldat.position.y, pSoldat.arrivee.x, pSoldat.arrivee.y)) > 4 then 
-        pSoldat.position = pSoldat.position + (dt / vitesseDeplSoldats) * pSoldat.parcours
-    else 
-        pSoldat.position.x = pSoldat.arrivee.x 
-        pSoldat.position.y = pSoldat.arrivee.y 
-        
-        -- Attaque le joueur
-        pSoldat.timerFrame = pSoldat.timerFrame + dt 
-        local vitesseAttaqueSoldats = .5
-        if pSoldat.timerFrame >= vitesseAttaqueSoldats then 
-            pSoldat.timerFrame = 0
-            pSoldat.frame = pSoldat.frame + 1
-            if pSoldat.frame > #img.soldat[pSoldat.direction] then 
-                pSoldat.frame = 1
-                _toucheTitan = true 
-                _degatsTitan = #pSoldat.soldats
+    if pSoldat.live then 
+        if math.floor(distance(pSoldat.position.x, pSoldat.position.y, pSoldat.arrivee.x, pSoldat.arrivee.y)) > 4 then 
+            pSoldat.position = pSoldat.position + (dt / vitesseDeplSoldats) * pSoldat.parcours
+        else 
+            pSoldat.position.x = pSoldat.arrivee.x 
+            pSoldat.position.y = pSoldat.arrivee.y 
+            
+            -- Attaque le joueur
+            pSoldat.timerFrame = pSoldat.timerFrame + dt 
+            local vitesseAttaqueSoldats = .5
+            if pSoldat.timerFrame >= vitesseAttaqueSoldats then 
+                pSoldat.timerFrame = 0
+                pSoldat.frame = pSoldat.frame + 1
+                if pSoldat.frame > #img.soldat[pSoldat.direction] then 
+                    pSoldat.frame = 1
+                    _toucheTitan = true 
+                    _degatsTitan = #pSoldat.soldats
+                end 
             end 
-        end 
-    end
+        end
 
-    pSoldat:updatePositionSoldats()
+        pSoldat:updatePositionSoldats()
+    end
 end 
 
 function drawSoldats(pSoldat)
 
     for i=1, #pSoldat.soldats do 
         local s = pSoldat.soldats[i]
-        love.graphics.draw(img.soldat[pSoldat.direction][pSoldat.frame], s.x, s.y, s.r, pSoldat.sx, pSoldat.sy, s.ox, s.oy)
+        if s.live then love.graphics.draw(img.soldat[pSoldat.direction][pSoldat.frame], s.x, s.y, s.r, pSoldat.sx, pSoldat.sy, s.ox, s.oy) end
     end
 end 
 
@@ -63,6 +65,7 @@ function updateSoldatsPosition(pSoldats)
     local ligne2 = pSoldats.y 
     local ligne3 = pSoldats.y + 25
 
+    
     pSoldats.soldats[1].x = colonne1
     pSoldats.soldats[1].y = ligne1
     pSoldats.soldats[2].x = colonne2
@@ -91,6 +94,30 @@ function updateSoldatsPosition(pSoldats)
     pSoldats.soldats[12].y = ligne3
 end 
 
+function recoitDegatsSoldats(pSoldats, pDegats, pFall)
+
+    for i=1, pDegats do 
+        if #pSoldats.restants > 0 then 
+            local nb = love.math.random(1, #pSoldats.restants)
+            local id = pSoldats.restants[nb]
+            table.remove(pSoldats.restants, nb)
+            pSoldats.soldats[id].live = false
+            
+            -- Particules
+
+        end
+    end 
+
+    if #pSoldats.restants == 0 then 
+        pSoldats.live = false
+    else 
+        if pFall then 
+            pSoldats.fall = true
+            pSoldats.timerFall = 0
+        end
+    end
+end 
+
 function newSoldats()
     local s = {}
 
@@ -98,6 +125,9 @@ function newSoldats()
     s.direction = love.math.random(1, 5)
     s.angle = math.pi / 5 * s.direction - math.pi / 10
     s.timerFrame = 0
+    s.fall = false
+    s.timerFall = 0
+    s.live = true
 
     s.r = 0
     s.sx = 1
@@ -108,7 +138,6 @@ function newSoldats()
     end 
 
     local rayon = 800
-    --local rayon = 300
     local posYOrigine = 265
     s.x = rayon * math.cos(s.angle) + _ecran.w / 2
     s.y = rayon * math.sin(s.angle) + posYOrigine 
@@ -121,15 +150,19 @@ function newSoldats()
     s.arrivee = newVector(arriveeX, arriveeY)
     s.parcours = s.arrivee - s.depart
     s.position = s.depart
+    
 
     s.soldats = {}
-    for i=1, 12 do  s.soldats[i] = { x = 0, y = 0, ox = img.soldat[s.direction][s.frame]:getWidth() / 2, oy = img.soldat[s.direction][s.frame]:getHeight() / 2} end
+    for i=1, 12 do  s.soldats[i] = { x = 0, y = 0, ox = img.soldat[s.direction][s.frame]:getWidth() / 2, oy = img.soldat[s.direction][s.frame]:getHeight() / 2, live = true} end
+
+    s.restants = {1,2,3,4,5,6,7,8,9,10,11,12}
 
     updateSoldatsPosition(s)
 
     s.draw = drawSoldats
     s.update = updateSoldats
     s.updatePositionSoldats = updateSoldatsPosition
+    s.recoitDegats = recoitDegatsSoldats
 
     return s
 

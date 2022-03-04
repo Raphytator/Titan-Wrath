@@ -13,6 +13,18 @@ function drawRectangle(pType, pX, pY, pW, pH, pColor)
     love.graphics.setColor(1,1,1,1)
 end 
 
+function drawLine(pX, pY, pX2, pY2, pColor)
+    love.graphics.setColor(pColor)
+    love.graphics.line(pX, pY, pX2, pY2)
+    love.graphics.setColor(1,1,1,1)
+end 
+
+function drawCercle(pType, pX, pY, pRayon, pColor)
+    love.graphics.setColor(pColor)
+    love.graphics.circle(pType, pX, pY, pRayon)
+    love.graphics.setColor(1,1,1,1)
+end 
+
 function drawVoile(pAlpha)
     local alpha
     if pAlpha ~= nil then alpha = pAlpha else alpha = .6 end 
