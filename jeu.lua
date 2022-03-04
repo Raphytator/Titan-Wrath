@@ -367,7 +367,7 @@ function jeu.update(dt)
                 if titan.frame > #img.titan[titan.etat][titan.direction] then 
                     
                     titan.timerFinCompetence = titan.timerFinCompetence + dt 
-                    if titan.timerFinCompetence > .2 then 
+                    if titan.timerFinCompetence > .1 then 
                         titan.timerFinCompetence = 0
                         titan.nbCoups = titan.nbCoups + 1 
                         titan.frame = 1
@@ -442,7 +442,7 @@ function jeu.update(dt)
         moveCloudToRight(cloud_layer[2], 1, dt)
         -- Clouds layer middle
         moveCloudToRight(cloud_layer[3], 1, dt)
-        moveCloudToLeft(cloud_layer[4], -1, dt)
+        moveCloudToLeft(cloud_layer[4], -1, dt) 
         moveCloud(cloud_layer[1], dt)
         moveCloud(cloud_layer[2], dt)
         moveCloud(cloud_layer[3], dt)
@@ -695,6 +695,8 @@ function jeu.effetCompetence(pComp)
     local zones = {} -- Dégats en fonction des zones
     local fall = false
 
+    playSound(_sfx.poing)
+
     shake.actif = true
     if pComp == titan.etats.POING then        
         shake.val = 1
@@ -736,13 +738,9 @@ function jeu.effetCompetence(pComp)
 
                 s:recoitDegats(zones[zoneDegats], fall)
                 
-                if not s.live then 
-                    table.remove(soldats, i)
-                end
+                if not s.live then table.remove(soldats, i) end
             end 
-        end 
-
-        
+        end         
     end 
 
     if #soldats == 0 and vague.spawnedSoldiers == stats.nbSoldats[vague.actu] then jeu.vagueSuivante() end 
