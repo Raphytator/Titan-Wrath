@@ -109,6 +109,8 @@ end
 
 function recoitDegatsSoldats(pSoldats, pDegats, pFall)
 
+    playSound(_sfx.splash)
+
     for i=1, pDegats do 
         if #pSoldats.restants > 0 then 
             local nb = love.math.random(1, #pSoldats.restants)

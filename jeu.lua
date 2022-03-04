@@ -375,9 +375,6 @@ function jeu.update(dt)
                     soldats[i]:update(dt)
                 end 
 
-                -- Vaches 
-
-
             end 
 
             -- Compétences 
