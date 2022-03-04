@@ -109,7 +109,7 @@ end
 
 function recoitDegatsSoldats(pSoldats, pDegats, pFall)
 
-    playSound(_sfx.splash)
+    if pDegats > 0 then playSound(_sfx.splash) end
 
     for i=1, pDegats do 
         if #pSoldats.restants > 0 then 

@@ -58,5 +58,7 @@ lang.menuPrincipal = "Menu principal"
 lang.vague = "Vague"
 lang.vagueFinale = "Vague finale"
 lang.victoire = "Victoire !"
+lang.reprendre = "Reprendre"
+
 
 return lang

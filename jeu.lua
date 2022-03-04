@@ -230,6 +230,12 @@ function jeu.init()
     btn.rejouer = newBtn("img", xBtn, yBtn, _img.btn, _img.btnHover, _img.btnPressed, "recommencer")
     btn.menuPrincipal = newBtn("img", xBtn, btn.rejouer.y + _img.btn:getHeight() + 10, _img.btn, _img.btnHover, _img.btnPressed, "menuPrincipal")
 
+    -- =====
+    -- Pause
+    -- =====
+    
+    btn.reprendre = newBtn("img", xBtn, yBtn, _img.btn, _img.btnHover, _img.btnPressed, "reprendre")
+
 end 
 
 --[[
@@ -258,7 +264,7 @@ end
 
 function jeu.update(dt)
 
-    if not _fade.fadeIn and not _fade.fadeOut then
+    if not _fade.fadeIn and not _fade.fadeOut and _etatActu ~= "pause" then
         if inArray({"victoire", "jeu"}, _etatActu) then 
             
             if shaderActif then 
@@ -499,6 +505,11 @@ function jeu.update(dt)
 
     end 
 
+    if _etatActu == "pause" then 
+        btn.reprendre:update(changeEtat, {"jeu"})
+        btn.menuPrincipal:update(fadeOut, {"menuPrincipal"})
+    end 
+
     if _fade.fadeEnd then 
         _fade.fadeEnd = false 
         _fade.alphaTransition = 0
@@ -601,6 +612,10 @@ function jeu.draw()
             btn.rejouer:draw()
             btn.menuPrincipal:draw()
         end
+    elseif _etatActu == "pause" then 
+        drawVoile()
+        btn.reprendre:draw()
+        btn.menuPrincipal:draw()
     elseif _etatActu == "victoire" then 
         drawVoile(alphaVoile)
         txt.victoire:print()
@@ -622,13 +637,18 @@ end
 ]]
 
 function jeu.keypressed(key)
-    if key == "space" then
-        if not vague.affichage and not titan.competenceActive and _etatActu == "jeu" then
-            if titan.cooldown[titan.etats.QUAKE].actu == 0 then 
-                jeu.activeCompetence(titan.etats.QUAKE)
+    if _etatActu == "jeu" then 
+        if key == "space" then
+            if not vague.affichage and not titan.competenceActive and _etatActu == "jeu" then
+                if titan.cooldown[titan.etats.QUAKE].actu == 0 then 
+                    jeu.activeCompetence(titan.etats.QUAKE)
+                end
             end
-        end
-    end 
+        elseif key == "escape" then 
+            playSound(_sfx.pause)
+            changeEtat("pause")
+        end 
+    end
 end
 
 --[[
