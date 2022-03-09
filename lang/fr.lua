@@ -60,5 +60,14 @@ lang.vagueFinale = "Vague finale"
 lang.victoire = "Victoire !"
 lang.reprendre = "Reprendre"
 
+-- ============
+-- Cinématiques
+-- ============
+
+lang.diapo1 = "Les humaines faisaient la fête tellement fort que l'on entendait leur joie jusque dans les entrailles de la terre, ce qui réveilla un titan très grognon."
+lang.diapo2 = '"VOS GUEULES !"'
+lang.diapo3 = "À présent le monde est calme et le titan peut retourner dormir quelques centaines d'années."
+lang.continuer = "Continuer"
+
 
 return lang

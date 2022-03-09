@@ -186,7 +186,9 @@ function menuPrincipal.update(dt)
             _musiqueActu = _music.menu
             changeEtat("menuPrincipal") 
         elseif _fade.sortie == "jouer" then
-            changeScene(_scenes.jeu)
+            _etatActu = 1
+            _continueMusique = true
+            changeScene(_scenes.cinematique)
         end 
         fadeIn()
     end

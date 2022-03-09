@@ -36,7 +36,7 @@ end
 function love.draw()
     love.graphics.scale(_scale)
     _sceneActu.draw()
-    fadeDraw()
+    fadeDraw() 
 end
 
 function love.keypressed(key)

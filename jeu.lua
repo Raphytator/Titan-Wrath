@@ -525,7 +525,9 @@ function jeu.update(dt)
             changeEtat("menuPrincipal")
             _musiqueActu = _music.menu
         elseif _fade.sortie == "victory" then
-            
+            _musiqueActu = _music.menu
+            changeEtat(3)
+            changeScene(_scenes.cinematique)            
         end 
         fadeIn()
     end
@@ -655,6 +657,11 @@ function jeu.keypressed(key)
             changeEtat("pause")
         end 
     end
+
+    if key == "w" then 
+        vague.actu = stats.nbVagues
+        jeu.vagueSuivante()
+    end 
 end
 
 
@@ -741,6 +748,7 @@ function jeu.lancementVague()
     vague.alpha = 0
     vague.timer = 0
     if vague.actu < stats.nbVagues then
+        txt.vague.txt = "vague"
         txt.vague.txtSup = " "..vague.actu
         playMusic(_music.wave)
     else 
@@ -918,6 +926,8 @@ function jeu.vagueSuivante()
         victoire.alpha = 0
         victoire.etat = "apparition"
         changeEtat("victoire")
+        _musiqueActu:stop()
+        _musiqueActu=nil
         playMusic(_music.victoire)
     end 
 end 

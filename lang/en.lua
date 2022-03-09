@@ -60,4 +60,13 @@ lang.vagueFinale = "Final wave"
 lang.victoire = "Victory !"
 lang.reprendre = "Resume"
 
+-- ============
+-- Cinématiques
+-- ============
+
+lang.diapo1 = "The humans were partying so hard that you could hear their joy even in the bowels of the earth, which woke up a very grumpy titan."
+lang.diapo2 = "SHUT UP !"
+lang.diapo3 = "Now the world is calm and the titan can go back to sleep for a few hundred years." 
+lang.continuer = "Next"
+
 return lang

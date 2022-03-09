@@ -121,6 +121,7 @@ end
 function fadeIn()
     _fade.alphaTransition = 1
     _fade.fadeIn = true
+    _fade.fadeOut = false
 end 
 
 function fadeOut(pSortie)

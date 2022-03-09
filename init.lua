@@ -30,7 +30,7 @@ function initVariables()
     _musiqueActu = nil
     _toucheTitan = false 
     _degatsTitan = 0
-    
+    _continueMusique = false
     fadeInitialisation()
 end 
 
@@ -86,5 +86,5 @@ function initScenes()
     _scenes = {}
     _scenes.menuPrincipal = require("menuPrincipal")
     _scenes.jeu = require("jeu")
-
+    _scenes.cinematique = require("cinematique")
 end 

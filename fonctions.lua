@@ -3,7 +3,7 @@ function changeScene(pNewScene)
     _sceneOld = _sceneActu
     _sceneActu = pNewScene
 
-    if _musiqueActu ~= nil then _musiqueActu:stop() end
+    if _musiqueActu ~= nil and not _continueMusique then _musiqueActu:stop() end
 
     if _sceneActu.initialisation == nil then 
         _sceneActu.initialisation = true
