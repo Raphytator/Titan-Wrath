@@ -264,9 +264,7 @@ end
 
 function jeu.update(dt)
 
-    if not _fade.fadeIn and not _fade.fadeOut and _etatActu ~= "pause" then
-        
-        
+    if not _fade.fadeIn and not _fade.fadeOut and _etatActu ~= "pause" then       
 
         if inArray({"victoire", "jeu"}, _etatActu) then 
             
@@ -287,7 +285,7 @@ function jeu.update(dt)
 
             if _mouse.y >= origineTitanY then 
 
-                angleMouse = math.abs(math.angle(mid, origineTitanY, _mouse.x, _mouse.y))
+                angleMouse = math.abs(math.angle(mid, origineTitanY, _mouse.x / _scale, _mouse.y /_scale))
 
                 if not titan.competenceActive and _etatActu == "jeu" then 
                     if angleMouse < pi5 then
