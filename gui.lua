@@ -165,6 +165,16 @@ function btnDraw(pBtn)
             
             love.graphics.setColor(1,1,1,1)
         end     
+    elseif pBtn.type == "imgQuad" then 
+        if pBtn.hover then
+            pBtn.img = pBtn.imgHover
+            pBtn.tileset = pBtn.tilesetImgHover
+        else
+            pBtn.img = pBtn.imgDefault
+            pBtn.tileset = pBtn.tilesetImgDefault
+        end
+        love.graphics.draw(pBtn.tileset, pBtn.img, pBtn.x, pBtn.y, pBtn.r, pBtn.sx, pBtn.sy, pBtn.ox, pBtn.oy)
+
     elseif pBtn.type == "txt" then 
         if pBtn.pressed then
             color = pBtn.colorPressed
@@ -234,6 +244,7 @@ end
 function newBtn(type, x, y, ...)
 
     -- btn img          => (image, imageHover, imagePressed, text, font, color)
+    -- btn imgQuad      => (tilesetImage, image, tilesetImageHover, imageHover, w, h)
     -- btn txt          => (texte, font, color, colorHover, colorPressed)
     -- btn chkbox       => (imgNoCheck, imgCheck, check)
 
@@ -267,6 +278,14 @@ function newBtn(type, x, y, ...)
 
         if p[4] ~= nil then tab.txt = p[4] end
         if p[5] ~= nil then tab.font = p[5] else tab.font = _fonts.btn end 
+    elseif type == "imgQuad" then
+        tab.tilesetImgDefault = p[1]
+        tab.imgDefault = p[2]
+        tab.tilesetImgHover = p[3]
+        tab.imgHover = p[4]
+        tab.tileset = nil
+        tab.w = p[5]
+        tab.h = p[6]
     elseif type == "txt" then
         tab.txt = p[1]
         tab.font = p[2]

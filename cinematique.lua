@@ -13,11 +13,13 @@ function cinematique.init()
     sprite.diapo[3] = newSprite(love.graphics.newImage("img/diapo_3.jpg"), 0, 0)
 
     txt.diapo = {}
-    txt.diapo[1] = newTxt("diapo1", _fonts.texte, 15, 580, {.9,.9,.9,1}, _ecran.w - 30, "center")
-    txt.diapo[2] = newTxt("diapo2", _fonts.texte, 15, 580, {.9,.9,.9,1}, _ecran.w - 30, "center")
-    txt.diapo[3] = newTxt("diapo3", _fonts.texte, 15, 580, {.9,.9,.9,1}, _ecran.w - 30, "center")
+    local h = 580
+    local h = 550
+    txt.diapo[1] = newTxt("diapo1", _fonts.texte, 15, h, {.9,.9,.9,1}, _ecran.w - 30, "center")
+    txt.diapo[2] = newTxt("diapo2", _fonts.texte2, 15, h + 45, {.9,.9,.9,1}, _ecran.w - 30, "center")
+    txt.diapo[3] = newTxt("diapo3", _fonts.texte, 15, h, {.9,.9,.9,1}, _ecran.w - 30, "center")
 
-    btn.continue = newBtn("img", _ecran.w - _img.btn:getWidth() - 25, _ecran.h - _img.btn:getHeight() - 25, _img.btn, _img.btnHover, _img.btnPressed, "continuer")
+    btn.continue = newBtn("img", _ecran.w - _img.btn:getWidth() - 25, _ecran.h - _img.btn:getHeight() - 15, _img.btn, _img.btnHover, _img.btnPressed, "continuer")
     
 end
 

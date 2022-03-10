@@ -656,10 +656,6 @@ function jeu.keypressed(key)
         end 
     end
 
-    if key == "w" then 
-        vague.actu = stats.nbVagues
-        jeu.vagueSuivante()
-    end 
 end
 
 

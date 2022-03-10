@@ -16,31 +16,47 @@ local spr = {}
 local txt = {}
 local tween = {}
 local cadre = {}
+local quad = {}
 
 local alphaVoile = 0
 local affichePage = false
 local cible = ""
+
+local langues = {
+    EN = 1,
+    FR = 2,
+    ES = 3,
+    IT = 4,
+    DE = 5
+}
 
 function menuPrincipal.init()
 
     -- ============
     -- Choix langue
     -- ============
-    img.flags = {
-        anglais = {
-            defaut = love.graphics.newImage("img/Flag-EN.png"),
-            hover = love.graphics.newImage("img/Flag-EN-Hover.png")
-        },
-        francais = {
-            defaut = love.graphics.newImage("img/Flag-FR.png"),
-            hover = love.graphics.newImage("img/Flag-FR-Hover.png")
-        }
-    }
 
-    local tier = _ecran.w / 3
+    img.tilesetFlags = love.graphics.newImage("img/flags.png")
+    img.tilesetFlagsHover = love.graphics.newImage("img/flagsHover.png")
 
-    btn.flagEN = newBtn("img", tier - img.flags.anglais.defaut:getWidth() / 2, (love.graphics.getHeight() - img.flags.anglais.defaut:getHeight())/2, img.flags.anglais.defaut, img.flags.anglais.hover)
-    btn.flagFR = newBtn("img", tier * 2 - img.flags.francais.defaut:getWidth() / 2, (love.graphics.getHeight() - img.flags.francais.defaut:getHeight())/2, img.flags.francais.defaut, img.flags.francais.hover)
+    quad.flags = {}
+    quad.flagsHover = {}
+    local wFlag = img.tilesetFlags:getWidth() / 5
+    local hFlag = img.tilesetFlags:getHeight()
+    for i=1, 5 do 
+        quad.flags[i] = love.graphics.newQuad((i-1)*wFlag, 0, wFlag, hFlag, img.tilesetFlags:getWidth(), img.tilesetFlags:getHeight())
+        quad.flagsHover[i] = love.graphics.newQuad((i-1)*wFlag, 0, wFlag, hFlag, img.tilesetFlags:getWidth(), img.tilesetFlags:getHeight())
+    end 
+
+    local wQuart = _ecran.w / 4
+    local hTier = _ecran.h / 3
+
+    btn.flags = {}
+    btn.flags[langues.EN] = newBtn("imgQuad", wQuart - wFlag / 2, hTier - hFlag / 2, img.tilesetFlags, quad.flags[langues.EN], img.tilesetFlagsHover, quad.flagsHover[langues.EN], wFlag, hFlag)
+    btn.flags[langues.FR] = newBtn("imgQuad", wQuart * 2 - wFlag / 2, hTier - hFlag / 2, img.tilesetFlags, quad.flags[langues.FR], img.tilesetFlagsHover, quad.flagsHover[langues.FR], wFlag, hFlag)
+    btn.flags[langues.ES] = newBtn("imgQuad", wQuart * 3 - wFlag / 2, hTier - hFlag / 2, img.tilesetFlags, quad.flags[langues.ES], img.tilesetFlagsHover, quad.flagsHover[langues.ES], wFlag, hFlag)
+    btn.flags[langues.IT] = newBtn("imgQuad", wQuart - wFlag / 2, hTier * 2 - hFlag / 2, img.tilesetFlags, quad.flags[langues.IT], img.tilesetFlagsHover, quad.flagsHover[langues.IT], wFlag, hFlag)
+    btn.flags[langues.DE] = newBtn("imgQuad", wQuart * 2- wFlag / 2, hTier * 2 - hFlag / 2, img.tilesetFlags, quad.flags[langues.DE], img.tilesetFlagsHover, quad.flagsHover[langues.DE], wFlag, hFlag)
 
     -- ==============
     -- Menu principal
@@ -142,8 +158,7 @@ function menuPrincipal.update(dt)
 
     if not _fade.fadeIn and not _fade.fadeOut then
         if _etatActu == "choixLangue" then
-            btn.flagEN:update(menuPrincipal.selectLangue, {"en"})
-            btn.flagFR:update(menuPrincipal.selectLangue, {"fr"})
+            for i=1, #btn.flags do btn.flags[i]:update(menuPrincipal.selectLangue, {i}) end
         elseif _etatActu == "menuPrincipal" then 
             tween.titreJeu:update(dt)
             txt.titreJeu.y = tween.titreJeu.actu
@@ -207,9 +222,9 @@ end
 
 function menuPrincipal.draw()
 
+    drawRectangle("fill", 0, 0, _ecran.w, _ecran.h, {.03,.03,.03,1})
     if _etatActu == "choixLangue" then
-        btn.flagEN:draw()
-        btn.flagFR:draw()
+        for i=1, #btn.flags do btn.flags[i]:draw() end
     elseif _etatActu == "retourMenuPrincipal" then 
         spr.fondMenu:draw()
         drawVoile(alphaVoile)
@@ -289,7 +304,15 @@ end
 ]]
 
 function menuPrincipal.selectLangue(pLang)
-    _str = require("lang/"..pLang)
+    local file
+    if pLang == langues.EN then file = "en"
+    elseif pLang == langues.FR then file = "fr"
+    elseif pLang == langues.ES then file = "es"
+    elseif pLang == langues.IT then file = "it"
+    elseif pLang == langues.DE then file = "de"
+    end 
+
+    _str = require("lang/"..file)
     fadeOut("menuPrincipal")
 end 
 

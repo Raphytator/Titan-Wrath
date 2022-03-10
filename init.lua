@@ -77,6 +77,7 @@ function initFonts()
     _fonts.victoire = love.graphics.newFont("font/DIOGENES.ttf", 100)
     _fonts.gameOver = love.graphics.newFont("font/DIOGENES.ttf", 70)
     _fonts.texte = love.graphics.newFont("font/DIOGENES.ttf", 32)
+    _fonts.texte2 = love.graphics.newFont("font/DIOGENES.ttf", 40)
     _fonts.btn = love.graphics.newFont("font/DIOGENES.ttf", 36)
     _fonts.mini = love.graphics.newFont("font/DIOGENES.ttf", 16)
 

@@ -80,7 +80,6 @@ function updateSoldatsPosition(pSoldats)
     local ligne1 = pSoldats.y - 25
     local ligne2 = pSoldats.y 
     local ligne3 = pSoldats.y + 25
-
     
     pSoldats.soldats[1].x = colonne1
     pSoldats.soldats[1].y = ligne1
@@ -190,7 +189,17 @@ function newSoldats()
     s.position = s.depart
 
     s.soldats = {}
-    for i=1, 12 do  s.soldats[i] = { x = 0, y = 0, ox = img.soldat[s.direction][s.frame]:getWidth() / 2, oy = img.soldat[s.direction][s.frame]:getHeight() / 2, live = true} end
+    for i=1, 12 do  
+        s.soldats[i] = { 
+            x = 0,
+            y = 0,
+            ox = img.soldat[s.direction][s.frame]:getWidth() / 2, 
+            oy = img.soldat[s.direction][s.frame]:getHeight() / 2, 
+            position = i,
+            etat = "marche",
+            live = true
+        } 
+    end
 
     s.restants = {1,2,3,4,5,6,7,8,9,10,11,12}
 
