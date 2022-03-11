@@ -856,8 +856,9 @@ function jeu.effetCompetence(pComp)
     -- Dégats aux soldats
     for i=#soldats, 1, -1 do 
         local s = soldats[i]
+        local distanceSoldats = distance(titanX, titanY, s.position.x, s.position.y)
         if inArray(tabDirection, s.direction) then 
-            local distanceSoldats = distance(titanX, titanY, s.position.x, s.position.y)
+            
             
 
             if distanceSoldats < 780 then 
@@ -868,11 +869,15 @@ function jeu.effetCompetence(pComp)
                 elseif distanceSoldats <= 580 then zoneDegats = 3                
                 else zoneDegats = 4 end 
 
-                s:recoitDegats(zones[zoneDegats], fall)
-                
+                s:recoitDegats(zones[zoneDegats], fall)               
                 if not s.live then table.remove(soldats, i) end
             end 
-        end         
+        end      
+        
+        if pComp == titan.etats.POING and s.direction ~= titan.direction and distanceSoldats <= 180 then
+            s:recoitDegats(zones[2], fall)
+            if not s.live then table.remove(soldats, i) end
+        end       
     end 
 
     if #soldats == 0 and vague.spawnedSoldiers == stats.nbSoldats[vague.actu] then jeu.vagueSuivante() end 
