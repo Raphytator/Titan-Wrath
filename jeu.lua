@@ -877,7 +877,7 @@ function jeu.effetCompetence(pComp)
         if pComp == titan.etats.POING and s.direction ~= titan.direction and distanceSoldats <= 180 then
             s:recoitDegats(zones[2], fall)
             if not s.live then table.remove(soldats, i) end
-        end       
+        end
     end 
 
     if #soldats == 0 and vague.spawnedSoldiers == stats.nbSoldats[vague.actu] then jeu.vagueSuivante() end 

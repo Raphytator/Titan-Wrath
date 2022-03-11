@@ -46,6 +46,10 @@ lang.creditsTxt3 = "Bsy (Grafica)"
 lang.creditsTxt4 = "Lysenti (Programmazione shader, Musica)"
 lang.creditsTxt5 = "Raphytator (Programmazione, Gamedesign, Sound Design)"
 lang.creditsTxt6 = "Grazie a Cehem per il suo prezioso aiuto in matematica"
+lang.creditsTxt7 = "Grazie a Kairos per la traduzione spagnola del gioco"
+lang.creditsTxt8 = "Grazie a Kairos per la traduzione italiana del gioco"
+lang.creditsTxt9 = "Grazie a Kairos per la traduzione tedesca del gioco"
+lang.creditsTxt10 = "Grazie a Kairos per la traduzione portoghese del gioco"
 
 -- ===
 -- Jeu
