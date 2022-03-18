@@ -499,18 +499,24 @@ function jeu.update(dt)
                 p.y = p.y + p.vy
                 p.vie = p.vie - dt 
             else 
-                p.progression = p.progression + dt
+                p.progression = p.progression + p.vitesse * dt
                 if p.progression < 1 then                     
                     p.x, p.y = p.curve:evaluate(p.progression)
                 else 
-                    p.vie = 0
+                    p.vie = 0                    
                 end
             end
 
             if p.vie > 0 then p.color[4] = p.vie / p.vieMax
             else p.color[4] = 0 end
 
-            if p.vie < 0 then table.remove(particules, i) end      
+            if p.vie <= 0 then
+                if p.curve ~= nil then 
+                    titan.pv = titan.pv + 1
+                    if titan.pv > stats.pvMaxTitan then titan.pv = stats.pvMaxTitan end
+                end
+                table.remove(particules, i)
+            end      
         end
 
     end 
@@ -661,9 +667,8 @@ function jeu.keypressed(key)
             playSound(_sfx.pause)
             _musiqueActu:setVolume(.3)
             changeEtat("pause")
-        end 
+        end
     end
-
 end
 
 
@@ -910,9 +915,7 @@ function jeu.effetCompetence(pComp)
                 vache.touche = true
                 vache.timerShader = 0
                 if vache.pv <= 0 then 
-                    vache.active = false 
-                    titan.pv = titan.pv + stats.vaches.gain
-                    if titan.pv > stats.pvMaxTitan then titan.pv = stats.pvMaxTitan end
+                    vache.active = false                    
                     ajoutParticules(sprite.vache, true)
                     playSound(_sfx.heal)
                 end 
@@ -995,8 +998,14 @@ end
 moveCloud = function(cloud, dt) cloud.x = cloud.x + cloud.vx * dt end
 
 function ajoutParticules(pSoldat, pVache)
-    
-    for i=1, love.math.random(150, 250) do 
+    local nbParticules
+    if pVache then 
+        nbParticules = 80 
+    else
+        nbParticules = love.math.random(150, 250)
+    end
+
+    for i=1, nbParticules do 
         local particle = {}
         local x = love.math.random(-20, 20)
         local y = love.math.random(-20, 20)
@@ -1012,8 +1021,14 @@ function ajoutParticules(pSoldat, pVache)
         particle.color = { love.math.random(), 0, 0, 1}
 
         if pVache ~= nil then
-            local milieuBarrePV = sprite.receptacleSante.x + sprite.receptacleSante.img:getWidth() / 2
-            local arriveeX = love.math.random(milieuBarrePV - 50, milieuBarrePV + 50)
+            local n = 0
+            for j=1, i do n = n + .005 end 
+            particle.vitesse = 1 - n
+
+            local positionAjout = stats.pvMaxTitan - titan.pv
+            if titan.pv + (i - 1) < stats.pvMaxTitan then positionAjout = i - 1 end 
+
+            local arriveeX = sprite.receptacleSante.x + (spriteQuad.barreSante.img:getWidth() / stats.pvMaxTitan) * (titan.pv + positionAjout)
             local arriveeY = sprite.receptacleSante.y + (sprite.receptacleSante.img:getHeight() / 2)            
             local distanceParticleBarreHp = distance(particle.x, particle.y, arriveeX, arriveeY)
             local distanceLeft = distance(particle.x, particle.y, 0, particle.y)
@@ -1021,9 +1036,11 @@ function ajoutParticules(pSoldat, pVache)
             local distanceRight = distance(particle.x, particle.y, _ecran.w, particle.y)
             if distanceRight > _ecran.w / 2 then distanceRight = _ecran.w / 2 end
             local posX = particle.x - love.math.random(-distanceLeft, distanceRight)
-            local posY = arriveeY + distanceParticleBarreHp / 2            
-            particle.curve = love.math.newBezierCurve(particle.x, particle.y, posX, posY, arriveeX, arriveeY)
+            local posY = arriveeY + distanceParticleBarreHp / 2
             particle.progression = 0
+            
+            particle.curve = love.math.newBezierCurve(particle.x, particle.y, posX, posY, arriveeX, arriveeY)
+
         end
 
         table.insert(particules, particle)
