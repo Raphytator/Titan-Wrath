@@ -672,7 +672,6 @@ function jeu.keypressed(key)
 end
 
 
-
 --[[
 ███╗   ███╗ ██████╗ ██╗   ██╗███████╗███████╗██████╗ ██████╗ ███████╗███████╗███████╗███████╗██████╗ 
 ████╗ ████║██╔═══██╗██║   ██║██╔════╝██╔════╝██╔══██╗██╔══██╗██╔════╝██╔════╝██╔════╝██╔════╝██╔══██╗
@@ -779,7 +778,7 @@ function jeu.spawnSoldiers()
 
     -- Vache 
     if vache.vague == vague.spawnedSoldiers then 
-        jeu.spawnVache()
+        if vague.actu > 1 then jeu.spawnVache() end
     end
 
     local nb = love.math.random(0, 100)
@@ -1000,7 +999,7 @@ moveCloud = function(cloud, dt) cloud.x = cloud.x + cloud.vx * dt end
 function ajoutParticules(pSoldat, pVache)
     local nbParticules
     if pVache then 
-        nbParticules = 80 
+        nbParticules = stats.vaches.gain
     else
         nbParticules = love.math.random(150, 250)
     end
