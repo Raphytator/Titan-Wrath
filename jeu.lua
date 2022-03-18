@@ -494,15 +494,23 @@ function jeu.update(dt)
 
             p.vy = p.vy + p.vitesseY * dt 
 
-            p.x = p.x + p.vx 
-            p.y = p.y + p.vy 
-
-            p.vie = p.vie - dt 
+            if p.curve == nil then 
+                p.x = p.x + p.vx 
+                p.y = p.y + p.vy
+                p.vie = p.vie - dt 
+            else 
+                p.progression = p.progression + dt
+                if p.progression < 1 then                     
+                    p.x, p.y = p.curve:evaluate(p.progression)
+                else 
+                    p.vie = 0
+                end
+            end
 
             if p.vie > 0 then p.color[4] = p.vie / p.vieMax
             else p.color[4] = 0 end
 
-            if p.vie < 0 then table.remove(particules, i) end             
+            if p.vie < 0 then table.remove(particules, i) end      
         end
 
     end 
@@ -905,7 +913,7 @@ function jeu.effetCompetence(pComp)
                     vache.active = false 
                     titan.pv = titan.pv + stats.vaches.gain
                     if titan.pv > stats.pvMaxTitan then titan.pv = stats.pvMaxTitan end
-                    ajoutParticules(sprite.vache)
+                    ajoutParticules(sprite.vache, true)
                     playSound(_sfx.heal)
                 end 
             end
@@ -986,7 +994,8 @@ end
 -- Déplacement des nuages quelque soit le sens du parallaxe
 moveCloud = function(cloud, dt) cloud.x = cloud.x + cloud.vx * dt end
 
-function ajoutParticules(pSoldat)
+function ajoutParticules(pSoldat, pVache)
+    
     for i=1, love.math.random(150, 250) do 
         local particle = {}
         local x = love.math.random(-20, 20)
@@ -1001,6 +1010,22 @@ function ajoutParticules(pSoldat)
         particle.vie = love.math.random(.3, .6)
         particle.vieMax = particle.vie
         particle.color = { love.math.random(), 0, 0, 1}
+
+        if pVache ~= nil then
+            local milieuBarrePV = sprite.receptacleSante.x + sprite.receptacleSante.img:getWidth() / 2
+            local arriveeX = love.math.random(milieuBarrePV - 50, milieuBarrePV + 50)
+            local arriveeY = sprite.receptacleSante.y + (sprite.receptacleSante.img:getHeight() / 2)            
+            local distanceParticleBarreHp = distance(particle.x, particle.y, arriveeX, arriveeY)
+            local distanceLeft = distance(particle.x, particle.y, 0, particle.y)
+            if distanceLeft > _ecran.w / 2 then distanceLeft = _ecran.w / 2 end
+            local distanceRight = distance(particle.x, particle.y, _ecran.w, particle.y)
+            if distanceRight > _ecran.w / 2 then distanceRight = _ecran.w / 2 end
+            local posX = particle.x - love.math.random(-distanceLeft, distanceRight)
+            local posY = arriveeY + distanceParticleBarreHp / 2            
+            particle.curve = love.math.newBezierCurve(particle.x, particle.y, posX, posY, arriveeX, arriveeY)
+            particle.progression = 0
+        end
+
         table.insert(particules, particle)
     end
 end
