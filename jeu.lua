@@ -361,12 +361,7 @@ function jeu.update(dt)
                     titan.frame = 1
                     titan.direction = 1
                     titan.vitesseFrame = 3
-                end         
-                
-                -- Cooldowns
-                jeu.updateCooldown(titan.etats.POING, dt)
-                jeu.updateCooldown(titan.etats.VAGUE, dt)
-                jeu.updateCooldown(titan.etats.QUAKE, dt)
+                end               
             
                 -- Vagues de soldats
                 if _etatActu == "jeu" then 
@@ -384,6 +379,11 @@ function jeu.update(dt)
                 end 
 
             end 
+
+            -- Cooldowns
+            jeu.updateCooldown(titan.etats.POING, dt)
+            jeu.updateCooldown(titan.etats.VAGUE, dt)
+            jeu.updateCooldown(titan.etats.QUAKE, dt)
 
             -- Compétences 
             if titan.competenceActive then
